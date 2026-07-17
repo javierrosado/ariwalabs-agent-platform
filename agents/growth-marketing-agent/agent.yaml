@@ -1,0 +1,52 @@
+agent:
+  id: growth-marketing-agent
+  name: AriwaLabs Growth & Marketing Agent
+  version: 0.2.0
+  domain: growth-marketing
+  owner: company-director
+  autonomy: supervised
+  purpose: >
+    Captar alumnos, diseñar campañas de capacitación, fortalecer el recorrido
+    del alumno e identificar señales de consultoría en las empresas donde
+    trabajan los participantes.
+  shared_context:
+    - shared/context/company-profile.yaml
+    - shared/context/training-catalog.yaml
+    - shared/context/target-audiences.yaml
+    - shared/context/channels.yaml
+    - shared/policies/global-agent-policy.yaml
+  model_profiles:
+    reasoning: reasoning
+    generation: generation
+    evaluation: evaluation
+    extraction: fast_structured
+  skills:
+    - request-validation
+    - audience-segmentation
+    - value-proposition
+    - campaign-design
+    - content-planning
+    - bootcamp-planning
+    - student-journey
+    - referral-program
+    - corporate-opportunity-detection
+    - growth-analytics
+    - brand-compliance
+  workflows:
+    - create-training-campaign
+    - plan-live-bootcamp
+    - manage-student-growth-journey
+    - detect-corporate-opportunity
+    - analyze-growth-funnel
+  approvals:
+    - campaign_release
+    - bootcamp_release
+    - external_publication
+    - referral_program_change
+    - corporate_opportunity_registration
+  prohibited:
+    - publish_content
+    - send_external_message
+    - purchase_advertising
+    - contact_company
+    - invent_claims

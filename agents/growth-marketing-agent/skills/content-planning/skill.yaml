@@ -1,0 +1,17 @@
+skill:
+  id: growth-marketing.content-planning
+  version: 0.2.0
+  purpose: Genera calendario y briefs.
+  model_profile: generation
+  approval_required: false
+  tools:
+    allowed:
+      - airtable-read
+      - airtable-write-draft
+      - artifact-create
+      - audit-append
+    prohibited:
+      - external-publish
+      - external-message
+      - payment
+  output_schema: ../../schemas/content-planning.schema.json

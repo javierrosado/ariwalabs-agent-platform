@@ -1,0 +1,17 @@
+skill:
+  id: growth-marketing.bootcamp-planning
+  version: 0.2.0
+  purpose: Diseña bootcamps con demo en vivo.
+  model_profile: reasoning
+  approval_required: true
+  tools:
+    allowed:
+      - airtable-read
+      - airtable-write-draft
+      - artifact-create
+      - audit-append
+    prohibited:
+      - external-publish
+      - external-message
+      - payment
+  output_schema: ../../schemas/bootcamp-planning.schema.json

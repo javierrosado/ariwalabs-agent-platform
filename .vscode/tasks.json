@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Validate Framework",
+      "type": "shell",
+      "command": "ariwalabs framework validate-repository --root .",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Growth Campaign",
+      "type": "shell",
+      "command": "ariwalabs agent run examples/requests/create-training-campaign.json --root .",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "pytest",
+      "problemMatcher": []
+    }
+  ]
+}

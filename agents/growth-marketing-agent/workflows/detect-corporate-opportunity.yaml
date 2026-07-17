@@ -1,0 +1,10 @@
+workflow:
+  id: detect-corporate-opportunity
+  restrictions:
+    - no_external_contact
+  steps:
+    - skill: growth-marketing.request-validation
+    - skill: growth-marketing.corporate-opportunity-detection
+    - approval: company-director
+      checkpoint: approve_opportunity_registration
+    - action: persist_draft_opportunity

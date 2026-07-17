@@ -1,0 +1,31 @@
+agent:
+  id: framework-agent
+  name: AriwaLabs Framework Agent
+  version: 0.1.0
+  domain: platform-governance
+  owner: company-director
+  autonomy: supervised
+  purpose: >
+    Validar, registrar, gobernar y preparar releases de agentes, skills,
+    workflows y handoffs de AriwaLabs.
+  shared_context:
+    - shared/policies/global-agent-policy.yaml
+  skills:
+    - validate-agent-definition
+    - register-agent
+    - validate-skill-contract
+    - validate-workflow
+    - validate-handoff
+    - release-agent
+  workflows:
+    - validate-repository
+    - onboard-agent
+    - release-agent
+  prohibited:
+    - execute_business_campaign
+    - publish_external_content
+    - modify_business_data
+  approval_required:
+    - agent_release
+    - breaking_change
+    - production_deployment

@@ -1,0 +1,7 @@
+skill:
+  id: framework.release-agent
+  version: 0.1.0
+  purpose: Consolida evidencias y prepara una decisión de release.
+  model_profile: fast_structured
+  approval_required: true
+  output_schema: ../../schemas/framework-report.schema.json

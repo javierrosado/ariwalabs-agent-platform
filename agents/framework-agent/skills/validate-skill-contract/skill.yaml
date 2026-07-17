@@ -1,0 +1,7 @@
+skill:
+  id: framework.validate-skill-contract
+  version: 0.1.0
+  purpose: Valida definición, input, output, tools, evaluación y pruebas de una skill.
+  model_profile: fast_structured
+  approval_required: false
+  output_schema: ../../schemas/framework-report.schema.json

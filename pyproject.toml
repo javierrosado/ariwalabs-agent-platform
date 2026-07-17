@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ariwalabs-agent-platform"
+version = "0.2.0"
+requires-python = ">=3.12"
+dependencies = [
+  "PyYAML>=6.0.2",
+  "jsonschema>=4.23.0",
+  "pydantic>=2.10.0",
+  "python-dotenv>=1.0.1"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.0",
+  "pytest-cov>=6.0.0",
+  "ruff>=0.9.0",
+  "mypy>=1.14.0"
+]
+
+[project.scripts]
+ariwalabs = "ariwalabs.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.mypy]
+python_version = "3.12"
+strict = true

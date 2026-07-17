@@ -1,0 +1,18 @@
+from pathlib import Path
+from datetime import datetime, timezone
+import json
+from typing import Any
+
+class AuditLogger:
+    def __init__(self, path: Path):
+        self.path = path
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+
+    def append(self, event_type: str, payload: dict[str, Any]) -> None:
+        event = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "event_type": event_type,
+            "payload": payload,
+        }
+        with self.path.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(event, ensure_ascii=False) + "\n")

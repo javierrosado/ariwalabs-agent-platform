@@ -1,0 +1,17 @@
+skill:
+  id: growth-marketing.audience-segmentation
+  version: 0.2.0
+  purpose: Prioriza segmentos y personas.
+  model_profile: reasoning
+  approval_required: false
+  tools:
+    allowed:
+      - airtable-read
+      - airtable-write-draft
+      - artifact-create
+      - audit-append
+    prohibited:
+      - external-publish
+      - external-message
+      - payment
+  output_schema: ../../schemas/audience-segmentation.schema.json

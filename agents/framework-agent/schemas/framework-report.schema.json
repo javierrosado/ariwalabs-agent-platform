@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FrameworkValidationReport",
+  "type": "object",
+  "required": [
+    "status",
+    "findings"
+  ],
+  "properties": {
+    "status": {
+      "enum": [
+        "passed",
+        "passed_with_warnings",
+        "blocked"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "release_decision": {
+      "enum": [
+        "ready",
+        "ready_with_observations",
+        "blocked"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

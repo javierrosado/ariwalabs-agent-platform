@@ -1,0 +1,12 @@
+workflow:
+  id: plan-live-bootcamp
+  steps:
+    - skill: growth-marketing.request-validation
+    - skill: growth-marketing.audience-segmentation
+    - skill: growth-marketing.value-proposition
+    - skill: growth-marketing.bootcamp-planning
+    - skill: growth-marketing.content-planning
+    - skill: growth-marketing.brand-compliance
+    - approval: company-director
+      checkpoint: approve_bootcamp
+    - action: persist_artifacts

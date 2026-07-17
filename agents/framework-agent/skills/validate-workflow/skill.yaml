@@ -1,0 +1,7 @@
+skill:
+  id: framework.validate-workflow
+  version: 0.1.0
+  purpose: Valida pasos, dependencias, condiciones, estados y checkpoints.
+  model_profile: fast_structured
+  approval_required: false
+  output_schema: ../../schemas/framework-report.schema.json

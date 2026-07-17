@@ -1,0 +1,8 @@
+{
+  "agent_id": "framework-agent",
+  "workflow_id": "validate-repository",
+  "requested_by": "company-director",
+  "input": {
+    "scope": "repository"
+  }
+}

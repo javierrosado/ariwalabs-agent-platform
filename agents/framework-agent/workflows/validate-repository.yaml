@@ -1,0 +1,12 @@
+workflow:
+  id: validate-repository
+  steps:
+    - skill: framework.validate-agent-definition
+      foreach: agents
+    - skill: framework.validate-skill-contract
+      foreach: skills
+    - skill: framework.validate-workflow
+      foreach: workflows
+    - skill: framework.validate-handoff
+      foreach: handoffs
+    - action: consolidate_validation_report

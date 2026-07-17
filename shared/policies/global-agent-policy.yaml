@@ -1,0 +1,29 @@
+global_policies:
+  single_operator:
+    enabled: true
+    operator_role: company-director
+  mandatory_human_approval:
+    - external_publication
+    - external_message
+    - marketing_budget
+    - campaign_release
+    - bootcamp_release
+    - university_agreement
+    - referral_program_change
+    - corporate_opportunity_registration
+    - use_of_customer_name
+    - production_deployment
+  prohibited:
+    - fabricate_success_cases
+    - fabricate_metrics
+    - publish_without_approval
+    - contact_companies_without_approval
+    - store_unnecessary_sensitive_data
+    - expose_secrets
+  principles:
+    - version_everything
+    - validate_contracts
+    - separate_fact_assumption_inference
+    - least_privilege
+    - trace_every_execution
+    - shared_context_is_source_of_truth

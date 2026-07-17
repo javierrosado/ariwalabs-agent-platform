@@ -1,0 +1,38 @@
+training_catalog:
+  currency: PEN
+  price_per_level: 500
+  modality: hybrid
+  delivery: live
+  certification: true
+  maximum_duration_hours: 48
+  sequential_progression: true
+  levels:
+    - id: basic
+      name: Nivel Basico
+      order: 1
+      purpose: Fundamentos y uso inicial de inteligencia artificial.
+    - id: intermediate
+      name: Nivel Intermedio
+      order: 2
+      prerequisite: basic
+      purpose: Aplicacion practica de IA en escenarios profesionales.
+    - id: advanced
+      name: Nivel Avanzado
+      order: 3
+      prerequisite: intermediate
+      purpose: >
+        Implementar agentes para acelerar el ciclo de desarrollo de software
+        usando aplicaciones demo para telco, banca y retail.
+  promotions:
+    group_offer: Tres personas pagan y una cuarta participa sin costo.
+    scholarships: true
+    installment_payments: false
+    university_agreements: true
+    corporate_programs: true
+    referral_program: true
+  bootcamps:
+    enabled: true
+    format: live_demo
+    purpose: >
+      Demostrar los beneficios de agentes de IA en el ciclo de desarrollo
+      de software mediante una demo en vivo.

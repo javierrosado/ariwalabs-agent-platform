@@ -1,0 +1,17 @@
+skill:
+  id: growth-marketing.value-proposition
+  version: 0.2.0
+  purpose: Define propuesta de valor por audiencia y nivel.
+  model_profile: reasoning
+  approval_required: false
+  tools:
+    allowed:
+      - airtable-read
+      - airtable-write-draft
+      - artifact-create
+      - audit-append
+    prohibited:
+      - external-publish
+      - external-message
+      - payment
+  output_schema: ../../schemas/value-proposition.schema.json

@@ -1,0 +1,7 @@
+workflow:
+  id: analyze-growth-funnel
+  steps:
+    - skill: growth-marketing.growth-analytics
+    - approval: company-director
+      checkpoint: acknowledge_recommendations
+    - action: persist_report

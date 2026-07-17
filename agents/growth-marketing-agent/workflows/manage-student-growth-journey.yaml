@@ -1,0 +1,7 @@
+workflow:
+  id: manage-student-growth-journey
+  steps:
+    - skill: growth-marketing.student-journey
+    - condition: eligible_for_referral
+      skill: growth-marketing.referral-program
+    - action: persist_state
