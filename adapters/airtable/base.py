@@ -1,4 +1,5 @@
-from typing import Protocol, Any
+from typing import Any, Protocol
+
 
 class AirtableAdapter(Protocol):
     def list_records(self, table: str, **filters: Any) -> list[dict[str, Any]]:

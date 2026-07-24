@@ -24,6 +24,8 @@ Version declarada: 0.2.0 en `pyproject.toml`; `framework-agent` 0.1.0;
 - Contratos base para Airtable y modelos en `adapters/`.
 - Tests unitarios e integracion minimos.
 - Workflow de GitHub Actions para ruff, mypy, pytest y validacion del framework.
+- Dependencias de desarrollo declaran `types-PyYAML` para validar imports de
+  `yaml` con `mypy --strict`.
 
 ## Parcial
 
@@ -126,6 +128,12 @@ Version declarada: 0.2.0 en `pyproject.toml`; `framework-agent` 0.1.0;
   - Resultado: fallo, `No module named ensurepip`.
 - `python3 -m compileall src tests adapters`
   - Resultado: paso; sintaxis Python compila.
+- `.venv/Scripts/python.exe --version`
+  - Resultado: fallo de compatibilidad detectado, `.venv` usa Python 3.11.9.
+  - Causa: `pyproject.toml` requiere Python `>=3.12` y ADR-001 fija Python
+    3.12 para el MVP.
+  - Accion requerida: recrear `.venv` con Python 3.12 antes de ejecutar
+    `pip install -e ".[dev]"`.
 - `find agents examples -type f -name '*.json' -exec python3 -m json.tool {} /dev/null \;`
   - Resultado: paso; JSON de agentes/examples valido.
 - Busqueda de secretos por nombres `.env`, `*.pem`, `*.key`, `*secret*`,

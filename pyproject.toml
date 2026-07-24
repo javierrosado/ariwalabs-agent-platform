@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ariwalabs-agent-platform"
-version = "0.2.0"
+version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
   "PyYAML>=6.0.2",
@@ -18,7 +18,8 @@ dev = [
   "pytest>=8.3.0",
   "pytest-cov>=6.0.0",
   "ruff>=0.9.0",
-  "mypy>=1.14.0"
+  "mypy>=1.14.0",
+  "types-PyYAML>=6.0.12.20250516"
 ]
 
 [project.scripts]

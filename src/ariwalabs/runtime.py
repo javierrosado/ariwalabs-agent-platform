@@ -1,11 +1,12 @@
+from datetime import UTC, datetime
 from pathlib import Path
-from uuid import uuid4
-from datetime import datetime, timezone
 from typing import Any
+from uuid import uuid4
 
+from .audit import AuditLogger
 from .config import load_yaml
 from .repository import JsonRepository
-from .audit import AuditLogger
+
 
 class AgentRuntime:
     def __init__(self, root: Path):
@@ -26,7 +27,7 @@ class AgentRuntime:
             "agent_version": config["version"],
             "workflow_id": workflow_id,
             "requested_by": request["requested_by"],
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "status": "pending_human_approval",
             "input": request.get("input", {}),
             "workflow_definition": workflow,

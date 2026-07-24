@@ -56,6 +56,9 @@ oportunidades corporativas sin aprobación.
 
 ## 3. Arquitectura
 
+El diagrama detallado de componentes y relaciones esta en
+`docs/architecture/framework-overview.md`.
+
 ```text
 Director
   |
@@ -194,25 +197,65 @@ Implementar `Training Program Agent` sobre la misma base.
 
 ## 7. Entorno local
 
-No se requieren contenedores durante la primera etapa.
+No se requieren contenedores durante la primera etapa. El proyecto requiere
+Python 3.12, tal como queda definido en `pyproject.toml` y en el ADR-001.
+
+Objetivo tecnico: preparar un entorno Python local, reproducible y alineado con
+el MVP para ejecutar el CLI `ariwalabs`, validar el repositorio y probar agentes
+sin Docker ni servicios externos.
+
+Al terminar estos pasos se espera tener una `.venv` activa con Python 3.12, el
+paquete instalado en modo editable con dependencias de desarrollo, el comando
+`ariwalabs` disponible y capacidad de ejecutar la validacion del repositorio, una
+campaña de ejemplo y la consulta de ejecuciones locales.
+
+Paso 1: comprobar la version de Python que esta activa en la terminal. Esto
+evita crear el entorno virtual con una version incompatible con el proyecto.
 
 ```bash
-python -m venv .venv
+python --version
 ```
+
+Si la version activa no es Python 3.12, elimina la venv anterior y creala con
+un interprete 3.12.
 
 Windows PowerShell:
 
+Paso 2: recrear el entorno virtual en Windows con Python 3.12 y activarlo. Esto
+aisla las dependencias del proyecto dentro de `.venv`.
+
 ```powershell
+Remove-Item -Recurse -Force .venv
+py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
-Instalación:
+WSL/Linux:
+
+Paso 2: recrear el entorno virtual en WSL/Linux con Python 3.12 y activarlo.
+Esto aisla las dependencias del proyecto dentro de `.venv`.
 
 ```bash
+rm -rf .venv
+python3.12 -m venv .venv
+source .venv/bin/activate
+```
+
+Instalacion:
+
+Paso 3: actualizar `pip` e instalar el paquete en modo editable con las
+dependencias de desarrollo. Esto deja disponible el comando `ariwalabs` y las
+herramientas de validacion local.
+
+```bash
+python -m pip install --upgrade pip
 pip install -e ".[dev]"
 ```
 
 Ejecutar validación del repositorio:
+
+Paso 4: validar que las definiciones de agentes, skills, workflows y contexto
+compartido cumplen las reglas basicas del framework.
 
 ```bash
 ariwalabs framework validate-repository
@@ -220,17 +263,32 @@ ariwalabs framework validate-repository
 
 Ejecutar campaña de ejemplo:
 
+Paso 5: crear una ejecucion local usando un request de ejemplo. Esto permite
+confirmar que el runtime puede cargar el agente, el workflow y persistir una
+ejecucion pendiente de aprobacion humana.
+
 ```bash
 ariwalabs agent run examples/requests/create-training-campaign.json
 ```
 
 Listar ejecuciones:
 
+Paso 6: revisar las ejecuciones locales guardadas por el runtime. Esto confirma
+que la persistencia JSON local esta funcionando.
+
 ```bash
 ariwalabs execution list
 ```
 
 ## 8. Flujo GitHub recomendado
+
+Objetivo: asegurar que cada cambio tecnico quede versionado, revisable y
+trazable en GitHub, que es la fuente de verdad del proyecto. Este flujo debe
+usarse cada vez que se modifique codigo, agentes, skills, workflows, schemas,
+prompts, politicas o documentacion relevante.
+
+La idea es trabajar en ramas cortas, validar localmente antes de publicar y
+dejar una revision explicita antes de integrar cambios a `main`.
 
 ```text
 main
@@ -241,40 +299,210 @@ main
 
 Por cada cambio:
 
-1. crear rama;
-2. modificar;
-3. ejecutar `ruff`, `mypy` y `pytest`;
-4. ejecutar validación del Framework Agent;
-5. commit;
-6. push;
-7. pull request;
-8. revisión propia;
-9. merge.
+1. Crear una rama desde `main`.
+   Objetivo: aislar el cambio para que pueda revisarse sin mezclarlo con trabajo
+   no relacionado.
+   Como hacerlo: actualizar `main` y crear una rama descriptiva.
+
+   ```bash
+   git switch main
+   git pull
+   git switch -c feature/nombre-del-cambio
+   ```
+
+2. Modificar los archivos necesarios.
+   Objetivo: mantener el alcance pequeno y alineado con la tarea, evitando
+   refactors o cambios paralelos que dificulten la revision.
+   Como hacerlo: editar solo los archivos relacionados con la tarea, revisar el
+   alcance y confirmar los detalles del diff.
+
+   ```bash
+   git status --short
+   git diff
+   ```
+
+3. Ejecutar validaciones locales.
+   Objetivo: detectar errores de framework, estilo, tipado y comportamiento antes
+   de publicar el cambio.
+   Como hacerlo: con la `.venv` activa, ejecutar estos comandos desde la raiz del
+   repositorio.
+
+   ```bash
+   ariwalabs framework validate-repository --root .
+   ruff check .
+   mypy src
+   pytest
+   ```
+
+4. Corregir hallazgos de validacion.
+   Objetivo: no avanzar a commit si el framework, el linter, el tipado o las
+   pruebas reportan errores.
+   Como hacerlo: leer la salida de cada comando, corregir los archivos afectados
+   y repetir las validaciones hasta que pasen.
+
+   ```bash
+   ariwalabs framework validate-repository --root .
+   ruff check .
+   mypy src
+   pytest
+   ```
+
+5. Crear un commit.
+   Objetivo: guardar una unidad logica de cambio con un mensaje claro sobre lo
+   que se modifico y por que.
+   Como hacerlo: revisar el diff final, agregar solo los archivos del cambio y
+   crear el commit.
+
+   ```bash
+   git status --short
+   git diff
+   git add <archivo>
+   git commit -m "mensaje claro"
+   ```
+
+6. Hacer push de la rama.
+   Objetivo: publicar el cambio en GitHub para conservar trazabilidad y permitir
+   revision.
+   Como hacerlo: subir la rama al remoto. La primera vez usa `-u`; despues basta
+   `git push`.
+
+   ```bash
+   git push -u origin feature/nombre-del-cambio
+   git push
+   ```
+
+7. Abrir un pull request.
+   Objetivo: explicar el cambio, listar pruebas ejecutadas y dejar visible el
+   impacto antes de integrarlo.
+   Como hacerlo: abrir el PR en GitHub desde la rama publicada, completar
+   resumen, archivos relevantes, pruebas ejecutadas, riesgos y pendientes.
+
+   ```text
+   Resumen:
+   - Que cambio se hizo.
+
+   Pruebas:
+   - ariwalabs framework validate-repository --root .
+   - ruff check .
+   - mypy src
+   - pytest
+
+   Riesgos o pendientes:
+   - Indicar si aplica.
+   ```
+
+8. Realizar revision propia.
+   Objetivo: leer el diff completo, verificar que no hay secretos, archivos
+   temporales, datos sensibles ni cambios fuera de alcance.
+   Como hacerlo: revisar la pestana de cambios del PR o ejecutar estos comandos;
+   confirmar que `.env`, credenciales y artefactos locales no estan incluidos.
+
+   ```bash
+   git status --short
+   git diff main...HEAD
+   ```
+
+9. Hacer merge.
+   Objetivo: integrar el cambio aprobado a `main` solo cuando las validaciones y
+   la revision sean satisfactorias.
+   Como hacerlo: usar el boton de merge en GitHub cuando el PR este aprobado y
+   las validaciones esten en verde; despues actualizar el checkout local.
+
+   ```bash
+   git switch main
+   git pull
+   ```
 
 ## 9. Reglas de implementación
 
-- No duplicar contexto dentro de agentes.
-- No llamar directamente al proveedor de IA desde una skill.
-- No llamar directamente a Airtable desde una skill.
-- Toda integración debe pasar por un adapter/tool.
-- Todo output debe tener schema.
-- Todo workflow debe tener estados y aprobación.
-- Todo handoff debe tener contrato.
-- Toda ejecución debe tener ID y versión.
-- Todo release debe pasar por Framework Agent.
+Objetivo: mantener el framework gobernable, auditable y seguro mientras crece.
+Estas reglas deben usarse como checklist antes de implementar, durante la
+revision del diff y antes de declarar listo un cambio.
+
+1. No duplicar contexto dentro de agentes.
+   Uso: referencia `shared/context/` desde agentes, prompts, skills o workflows.
+   Objetivo: evitar que existan versiones contradictorias del contexto
+   institucional.
+
+2. No llamar directamente al proveedor de IA desde una skill.
+   Uso: consume modelos mediante perfiles logicos y el Model Gateway.
+   Objetivo: permitir cambiar proveedores o modelos sin reescribir skills.
+
+3. No llamar directamente a Airtable desde una skill.
+   Uso: encapsula cualquier lectura o escritura en `adapters/` o en el futuro
+   Tool Gateway.
+   Objetivo: centralizar permisos, errores, idempotencia y auditoria de datos.
+
+4. Toda integracion debe pasar por un adapter/tool.
+   Uso: crea o extiende contratos de integracion antes de conectar servicios
+   externos.
+   Objetivo: impedir APIs paralelas y mantener un punto controlado de acceso.
+
+5. Todo output debe tener schema.
+   Uso: define o actualiza JSON Schemas para respuestas de skills, handoffs y
+   reportes.
+   Objetivo: validar resultados automaticamente y reducir outputs ambiguos.
+
+6. Todo workflow debe tener estados y aprobacion.
+   Uso: declara checkpoints y estados de ejecucion, especialmente antes de
+   acciones externas o comerciales.
+   Objetivo: conservar control humano y trazabilidad del proceso.
+
+7. Todo handoff debe tener contrato.
+   Uso: documenta productor, consumidor, payload, aprobaciones, errores y
+   persistencia esperada.
+   Objetivo: que un agente pueda entregar trabajo a otro sin supuestos
+   implicitos.
+
+8. Toda ejecucion debe tener ID y version.
+   Uso: registra identificadores estables para ejecuciones, artefactos y
+   versiones de agente/workflow.
+   Objetivo: poder auditar que version produjo cada resultado.
+
+9. Todo release debe pasar por Framework Agent.
+   Uso: ejecuta la revision tecnica del framework antes de declarar listo un
+   agente, skill, workflow o contrato.
+   Objetivo: bloquear cambios incompatibles antes de que afecten la operacion.
 
 ## 10. Prompts para Codex
 
-Revisar `prompts/codex`.
+Objetivo: usar prompts operativos versionados para pedir trabajo a Codex de
+forma consistente. Los prompts en `prompts/codex` ayudan a cargar contexto,
+mantener las reglas del repositorio y pedir entregables verificables.
+
+Como deben usarse:
+
+1. Abrir el prompt que corresponde a la tarea.
+   Objetivo: elegir una instruccion base alineada con el tipo de cambio.
+
+2. Reemplazar los placeholders como `<COMPONENT>`, `<AGENT_ID>` o `<SKILL_ID>`.
+   Objetivo: convertir el prompt generico en una instruccion concreta.
+
+3. Pegar el prompt en Codex junto con cualquier restriccion adicional.
+   Objetivo: iniciar la tarea con contexto, alcance y criterios de validacion
+   claros.
+
+4. Revisar el plan, archivos propuestos y pruebas antes de aprobar cambios
+   sensibles.
+   Objetivo: conservar aprobacion humana y evitar impactos externos no deseados.
 
 Prompts principales:
 
-- `00-load-project-context.md`
-- `01-implement-framework-component.md`
-- `02-create-new-agent.md`
-- `03-create-new-skill.md`
-- `04-integrate-airtable.md`
-- `05-review-release.md`
+- `00-load-project-context.md`: usarlo al iniciar una sesion o antes de una
+  tarea amplia. Sirve para que Codex lea contexto, politicas, agente afectado,
+  riesgos, archivos y pruebas antes de modificar.
+- `01-implement-framework-component.md`: usarlo para construir o mejorar piezas
+  del framework, como runtime, validadores, gateways, auditoria o registries.
+- `02-create-new-agent.md`: usarlo cuando se necesite definir un agente nuevo
+  con `agent.yaml`, skills, workflows, schemas, handoffs, aprobaciones y pruebas.
+- `03-create-new-skill.md`: usarlo para crear una skill nueva dentro de un
+  agente existente, con input schema, output schema, permisos, errores y
+  pruebas.
+- `04-integrate-airtable.md`: usarlo cuando se implemente o amplie el Airtable
+  Adapter. No debe usarse para llamar Airtable directamente desde una skill.
+- `05-review-release.md`: usarlo antes de declarar listo un agente o release.
+  Sirve para revisar definicion, contratos, politicas, pruebas, secretos y
+  compatibilidad.
 
 ## 11. Limitaciones actuales
 

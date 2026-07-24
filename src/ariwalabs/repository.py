@@ -1,7 +1,8 @@
-from pathlib import Path
-from datetime import datetime, timezone
-from typing import Any
 import json
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
+
 
 class JsonRepository:
     def __init__(self, base_path: Path):
@@ -13,7 +14,7 @@ class JsonRepository:
         folder.mkdir(parents=True, exist_ok=True)
         path = folder / f"{entity_id}.json"
         body = {
-            "saved_at": datetime.now(timezone.utc).isoformat(),
+            "saved_at": datetime.now(UTC).isoformat(),
             "payload": payload,
         }
         path.write_text(json.dumps(body, indent=2, ensure_ascii=False), encoding="utf-8")

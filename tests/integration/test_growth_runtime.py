@@ -1,5 +1,7 @@
 from pathlib import Path
+
 from ariwalabs.runtime import AgentRuntime
+
 
 def test_growth_campaign_creates_execution() -> None:
     root = Path(__file__).resolve().parents[2]

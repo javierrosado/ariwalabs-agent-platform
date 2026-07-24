@@ -13,7 +13,7 @@ company:
     consultoria en las empresas donde trabajan.
   director:
     role: company-director
-    execution_owner: Javier
+    execution_owner: Javier Rosado
     human_approval_required: true
   strategic_flywheel:
     - prospect

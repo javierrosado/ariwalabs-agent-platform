@@ -1,7 +1,8 @@
-from pathlib import Path
-from datetime import datetime, timezone
 import json
+from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
+
 
 class AuditLogger:
     def __init__(self, path: Path):
@@ -10,7 +11,7 @@ class AuditLogger:
 
     def append(self, event_type: str, payload: dict[str, Any]) -> None:
         event = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "event_type": event_type,
             "payload": payload,
         }

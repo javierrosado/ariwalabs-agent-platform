@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Any
+
 from .config import load_yaml
+
 
 class FrameworkValidator:
     def __init__(self, root: Path):
