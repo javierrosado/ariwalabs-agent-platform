@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AriwaLabsHandoffContract",
+  "type": "object",
+  "required": [
+    "handoffs"
+  ],
+  "properties": {
+    "handoffs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "version",
+          "producer",
+          "consumer",
+          "trigger",
+          "input",
+          "output",
+          "preconditions",
+          "approval",
+          "persistence",
+          "errors",
+          "idempotency"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "producer": {
+            "type": "string"
+          },
+          "consumer": {
+            "type": "string"
+          },
+          "trigger": {
+            "type": "string"
+          },
+          "input": {
+            "$ref": "#/$defs/field_contract"
+          },
+          "output": {
+            "$ref": "#/$defs/field_contract"
+          },
+          "preconditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "approval": {
+            "type": "object",
+            "required": [
+              "required",
+              "approver",
+              "checkpoint"
+            ],
+            "properties": {
+              "required": {
+                "type": "boolean"
+              },
+              "approver": {
+                "type": "string"
+              },
+              "checkpoint": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "persistence": {
+            "type": "object",
+            "required": [
+              "current",
+              "future"
+            ],
+            "properties": {
+              "current": {
+                "type": "string"
+              },
+              "future": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "idempotency": {
+            "type": "object",
+            "required": [
+              "key_strategy"
+            ],
+            "properties": {
+              "key_strategy": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "field_contract": {
+      "type": "object",
+      "required": [
+        "required"
+      ],
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

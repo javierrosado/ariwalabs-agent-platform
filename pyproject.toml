@@ -7,6 +7,7 @@ name = "ariwalabs-agent-platform"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+  "openai>=1.99.0",
   "PyYAML>=6.0.2",
   "jsonschema>=4.23.0",
   "pydantic>=2.10.0",
@@ -26,7 +27,8 @@ dev = [
 ariwalabs = "ariwalabs.cli:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src", "."]
+include = ["ariwalabs*", "adapters*"]
 
 [tool.ruff]
 line-length = 100
@@ -34,3 +36,6 @@ line-length = 100
 [tool.mypy]
 python_version = "3.12"
 strict = true
+
+[tool.pytest.ini_options]
+pythonpath = [".", "src"]

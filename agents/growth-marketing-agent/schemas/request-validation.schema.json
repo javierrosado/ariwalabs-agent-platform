@@ -2,5 +2,146 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "request-validation",
   "type": "object",
-  "additionalProperties": true
+  "required": [
+    "status",
+    "summary",
+    "request_type",
+    "validated_input",
+    "missing_information",
+    "facts",
+    "assumptions",
+    "risks",
+    "approval_required",
+    "approval_reason",
+    "errors",
+    "next_actions"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "valid",
+        "needs_input",
+        "blocked"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "request_type": {
+      "type": "string",
+      "enum": [
+        "training_campaign",
+        "live_bootcamp",
+        "student_journey",
+        "corporate_opportunity",
+        "growth_funnel",
+        "unknown"
+      ]
+    },
+    "validated_input": {
+      "type": "object",
+      "required": [
+        "objective",
+        "audience_ids",
+        "channel_ids",
+        "training_level_ids"
+      ],
+      "properties": {
+        "objective": {
+          "type": "string"
+        },
+        "audience_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "channel_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "training_level_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "missing_information": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approval_required": {
+      "type": "boolean"
+    },
+    "approval_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "errors": {
+      "$ref": "#/$defs/errors"
+    },
+    "next_actions": {
+      "$ref": "#/$defs/next_actions"
+    }
+  },
+  "$defs": {
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "recoverable"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "recoverable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
 }

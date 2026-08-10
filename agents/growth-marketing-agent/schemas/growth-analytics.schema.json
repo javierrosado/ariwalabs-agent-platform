@@ -2,5 +2,140 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "growth-analytics",
   "type": "object",
-  "additionalProperties": true
+  "required": [
+    "status",
+    "summary",
+    "metrics",
+    "recommendations",
+    "facts",
+    "assumptions",
+    "risks",
+    "missing_information",
+    "approval_required",
+    "approval_reason",
+    "errors",
+    "next_actions"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "needs_input",
+        "blocked"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "value",
+          "source"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "number",
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "recommendation",
+          "rationale",
+          "requires_approval"
+        ],
+        "properties": {
+          "recommendation": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "requires_approval": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "facts": {
+      "$ref": "#/$defs/string_list"
+    },
+    "assumptions": {
+      "$ref": "#/$defs/string_list"
+    },
+    "risks": {
+      "$ref": "#/$defs/string_list"
+    },
+    "missing_information": {
+      "$ref": "#/$defs/string_list"
+    },
+    "approval_required": {
+      "type": "boolean"
+    },
+    "approval_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "errors": {
+      "$ref": "#/$defs/errors"
+    },
+    "next_actions": {
+      "$ref": "#/$defs/string_list"
+    }
+  },
+  "$defs": {
+    "string_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "recoverable"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "recoverable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
 }

@@ -1,0 +1,13 @@
+{
+  "agent_id": "growth-marketing-agent",
+  "workflow_id": "detect-corporate-opportunity",
+  "requested_by": "company-director",
+  "input": {
+    "objective": "Detectar oportunidad corporativa a partir de senal consentida",
+    "signal_source": "student_disclosed_company_need",
+    "company_context": {
+      "industry": "retail",
+      "need": "automatizar atencion interna con agentes"
+    }
+  }
+}

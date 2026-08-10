@@ -1,0 +1,13 @@
+{
+  "agent_id": "growth-marketing-agent",
+  "workflow_id": "create-training-campaign",
+  "requested_by": "company-director",
+  "input": {
+    "objective": "Captar alumnos para los tres niveles de IA",
+    "priority_segment": "university_students",
+    "budget": {
+      "currency": "PEN",
+      "maximum": 3000
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "agent_id": "growth-marketing-agent",
+  "workflow_id": "plan-live-bootcamp",
+  "requested_by": "company-director",
+  "input": {
+    "objective": "Planificar bootcamp hibrido de nivel basico",
+    "level": "basic",
+    "modality": "hybrid",
+    "max_duration_hours": 48,
+    "certificate_required": true
+  }
+}

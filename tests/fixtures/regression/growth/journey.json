@@ -1,0 +1,10 @@
+{
+  "agent_id": "growth-marketing-agent",
+  "workflow_id": "manage-student-growth-journey",
+  "requested_by": "company-director",
+  "input": {
+    "objective": "Acompanhar avance del alumno y activar referido",
+    "student_stage": "completed_intermediate",
+    "eligible_for_referral": true
+  }
+}

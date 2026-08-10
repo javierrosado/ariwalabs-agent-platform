@@ -20,6 +20,18 @@ class JsonRepository:
         path.write_text(json.dumps(body, indent=2, ensure_ascii=False), encoding="utf-8")
         return path
 
+    def load(self, category: str, entity_id: str) -> dict[str, Any]:
+        path = self.base_path / category / f"{entity_id}.json"
+        body = json.loads(path.read_text(encoding="utf-8"))
+        payload = body.get("payload", {})
+        if not isinstance(payload, dict):
+            msg = f"{category}/{entity_id}: payload invalido"
+            raise TypeError(msg)
+        return payload
+
+    def exists(self, category: str, entity_id: str) -> bool:
+        return (self.base_path / category / f"{entity_id}.json").exists()
+
     def list(self, category: str) -> list[Path]:
         folder = self.base_path / category
         return sorted(folder.glob("*.json")) if folder.exists() else []

@@ -1,7 +1,7 @@
 # Current State
 
-Fecha de actualizacion: 2026-07-17
-Version declarada: 0.2.0 en `pyproject.toml`; `framework-agent` 0.1.0;
+Fecha de actualizacion: 2026-08-10
+Version declarada: 0.1.0 en `pyproject.toml`; `framework-agent` 0.1.0;
 `growth-marketing-agent` 0.2.0.
 
 ## Implementado
@@ -21,54 +21,94 @@ Version declarada: 0.2.0 en `pyproject.toml`; `framework-agent` 0.1.0;
 - Workflows declarativos en YAML para ambos agentes.
 - Contexto compartido en `shared/context/`.
 - Politica global en `shared/policies/global-agent-policy.yaml`.
-- Contratos base para Airtable y modelos en `adapters/`.
+- Output schemas estrictos para skills de Growth & Marketing y reportes del
+  Framework Agent.
+- Airtable Adapter HTTP desacoplado en `adapters/airtable/` con contrato,
+  errores tipados, tablas permitidas, retries para rate-limit, idempotencia y
+  auditoria sin secretos; incluye validacion de acceso via CLI.
+- Diseno contractual de tablas Airtable para People, Organizations,
+  TrainingPrograms, Cohorts, Enrollments, Campaigns, ContentItems, Events,
+  Referrals, Opportunities, Approvals, AgentExecutions y Artifacts, con campos,
+  relaciones, privacidad e idempotencia.
+- Tablas Airtable del contrato creadas en la base configurada por `.env`,
+  usando Metadata API e idempotencia por metadata.
+- Contrato base para modelos en `adapters/models/`.
 - Tests unitarios e integracion minimos.
 - Workflow de GitHub Actions para ruff, mypy, pytest y validacion del framework.
+- Entorno Python dev local preparado con `.venv`, instalacion editable y
+  dependencias dev; Javier confirmo que las validaciones base corren
+  correctamente.
 - Dependencias de desarrollo declaran `types-PyYAML` para validar imports de
   `yaml` con `mypy --strict`.
+- `SkillRegistry` valida ids, versiones, output schemas, tools, aprobaciones y
+  ownership de skills.
+- `HandoffRegistry` valida contratos estructurados de handoffs, incluyendo
+  productor, consumidor, aprobacion, persistencia, errores e idempotencia.
+- `WorkflowEngine` interpreta workflows locales con pasos `skill`, `parallel`,
+  `condition`, `approval`, `action` y `workflow`, simulando ejecucion y pausando
+  en aprobaciones humanas.
+- `ApprovalEngine` crea, lista, aprueba y rechaza approvals locales, actualiza
+  ejecuciones relacionadas y audita decisiones.
+- CLI `ariwalabs approval` permite listar approvals pendientes y aprobar o
+  rechazar con razon registrada.
+- `ArtifactManager` registra metadata de artifacts locales en
+  `runtime/data/artifacts/` y audita creacion.
+- `AuditLogger` escribe eventos JSONL canonicos con `event_id`, severidad,
+  actor, correlacion, payload sanitizado y helpers para ejecuciones,
+  validaciones, approvals, artifacts, errores y costos.
+- `ModelGateway` enruta perfiles logicos `reasoning`, `generation`,
+  `evaluation` y `fast_structured` hacia un `ModelAdapter`, con adapter falso
+  local, errores tipados, auditoria y registro opcional de usage/costos.
+- `OpenAIModelAdapter` implementa el contrato `ModelAdapter` usando Responses
+  API con Structured Outputs, modelos configurables por perfil desde `.env`,
+  validacion local contra JSON Schema y tests sin red mediante cliente
+  inyectable.
+- `ModelAdapterFactory` centraliza la seleccion de proveedor mediante
+  `MODEL_PROVIDER`, soportando `fake` y `openai`.
+- Structured Outputs recuperables: `ModelGateway.generate_structured()`
+  normaliza salidas invalidas, incompletas, rechazadas o fallos de proveedor;
+  `WorkflowEngine` pausa el flujo en `needs_structured_output_review` y
+  `AgentRuntime` persiste `structured_output_error` sin crear approvals ni
+  artifacts posteriores.
+- Pruebas de regresion para Growth & Marketing con fixtures versionados de
+  campana, bootcamp, journey y oportunidad.
+- Backlog P1 "Necesario para MVP" cerrado formalmente el 2026-08-08.
+- Control de idempotencia end-to-end local: `AgentRuntime` calcula o recibe
+  `idempotency_key`, guarda un indice transitorio JSON y reusa la ejecucion
+  existente para evitar duplicar approvals y artifacts.
+- Metricas de tokens y costos: Model Gateway audita tokens por ejecucion,
+  perfil y skill opcional; `OpenAIModelAdapter` estima costos cuando existen
+  tarifas configuradas por modelo en `.env`.
 
 ## Parcial
 
-- Workflow Engine: los workflows estan definidos, pero el runtime no interpreta
-  pasos, paralelismo, condiciones, acciones ni checkpoints.
-- Approval Engine: solo existe estado pendiente en la ejecucion; no hay CLI ni
-  persistencia de decisiones.
-- Audit Log: registra creacion de ejecuciones, pero no cubre validaciones,
-  approvals, artifacts, costos, errores ni decisiones.
-- Artifact Manager: mencionado en arquitectura, pero no implementado.
-- Skill Registry y Agent Registry: mencionados, pero no implementados como
-  componentes.
+- Agent Registry: mencionado, pero no implementado como componente.
 - Context Engine: existe carga de rutas declaradas, pero no hay seleccion ni
   composicion de contexto.
-- Model Gateway: existe contrato `ModelAdapter`, pero no gateway ni proveedor.
+- Integracion controlada con ejecucion real de skills mediante Model Gateway.
 - Tool Gateway: mencionado, pero no implementado.
-- Airtable Adapter: existe protocolo base y README, pero no implementacion.
 - Evaluation Engine: mencionado, pero no implementado.
-- Handoffs: documentacion inicial existe para Growth, pero no contratos
-  versionados ni validacion automatica.
+- Handoffs: existen contratos YAML versionados y validacion automatica basica.
 
 ## Stubs y deuda tecnica
 
-- Los schemas de Growth & Marketing aceptan `additionalProperties: true` sin
-  campos requeridos; son demasiado genericos para structured outputs.
-- `framework-report.schema.json` permite findings como objetos libres y
-  propiedades adicionales.
-- `shared/schemas/`, `shared/templates/` y `framework/` no contienen archivos.
+- `shared/templates/` y `framework/` no contienen archivos.
 - El checkout ya contiene `.git` y remote `origin` apuntando a
   `https://github.com/javierrosado/ariwalabs-agent-platform.git`.
-- La validacion del framework no comprueba output schemas, tools, approvals,
-  prohibited actions, handoffs ni existencia de prompts.
-- No hay controles de idempotencia.
-- No hay metricas de tokens, costos o latencia.
+- La validacion del framework usa `SkillRegistry` y `HandoffRegistry`, pero aun
+  no comprueba existencia de prompts.
+- Hay idempotencia en Airtable Adapter mediante `IdempotencyKey`; el runtime
+  local ya evita duplicados por request, pero el indice JSON no es
+  transaccional.
+- No hay metricas de latencia.
 - No hay manejo tipado de errores en runtime/CLI.
 - Los tests de integracion escriben en `runtime/data`, que esta ignorado pero
   puede dejar artefactos locales.
 
 ## Integraciones pendientes
 
-- Airtable real.
-- OpenAI mediante Model Gateway.
-- Structured outputs.
+- Sincronizacion operacional desde runtime local hacia Airtable.
+- Integracion controlada con ejecucion real de skills mediante Model Gateway.
 - WhatsApp Business Platform.
 - Email transaccional.
 - Calendarios.
@@ -83,70 +123,83 @@ Version declarada: 0.2.0 en `pyproject.toml`; `framework-agent` 0.1.0;
 - Los schemas genericos no protegen contra outputs incompletos o ambiguos.
 - La trazabilidad en GitHub depende de mantener commits y pushes despues de los
   cambios relevantes.
-- La ausencia de Approval Engine puede inducir a flujos manuales no auditables.
+- La integracion OpenAI real todavia debe cuidar que prompts, payloads sensibles
+  y secretos no se registren en auditoria.
 - El runtime puede aceptar requests invalidos hasta fallar por excepcion.
 
 ## Decisiones pendientes
 
-- Forma exacta del Agent Registry y Skill Registry.
+- Forma exacta del Agent Registry.
 - Contrato canonico para workflows, steps, condiciones y paralelismo.
 - Modelo de persistencia local transitorio vs Airtable para ejecuciones.
-- Disenio de tablas Airtable con campos, relaciones e idempotencia.
-- Contrato del Approval Engine y CLI de aprobaciones.
+- Vistas operativas de Airtable y sincronizacion desde runtime local.
 - Politica de evaluacion y regresion para outputs de agentes.
 
 ## Validaciones ejecutadas en esta sesion
 
-- `ariwalabs framework validate-repository --root .`
-  - Resultado: fallo, `/bin/bash: ariwalabs: command not found`.
-  - Causa probable: el paquete no esta instalado en editable y no existe venv
-    activo.
-  - Accion requerida: crear/activar `.venv` e instalar `pip install -e ".[dev]"`.
-- `pytest`
-  - Resultado: fallo, `/bin/bash: pytest: command not found`.
-  - Causa probable: dependencias dev no instaladas.
-  - Accion requerida: instalar dependencias dev en `.venv`.
-- `ruff check .`
-  - Resultado: fallo, `/bin/bash: ruff: command not found`.
-  - Causa probable: dependencias dev no instaladas.
-  - Accion requerida: instalar dependencias dev en `.venv`.
-- `mypy src`
-  - Resultado: fallo, `/bin/bash: mypy: command not found`.
-  - Causa probable: dependencias dev no instaladas.
-  - Accion requerida: instalar dependencias dev en `.venv`.
-- `python --version`
-  - Resultado: fallo, `/bin/bash: python: command not found`.
-  - Causa probable: el binario disponible en WSL es `python3`.
-- `python3 --version`
-  - Resultado: paso, Python 3.12.3.
-- `python3 -m pip --version`
-  - Resultado: fallo, `No module named pip`.
-  - Causa probable: instalacion Python del sistema sin pip/ensurepip.
-  - Accion requerida: instalar pip o crear venv con una distribucion Python que
-    incluya pip.
-- `python3 -m ensurepip --version`
-  - Resultado: fallo, `No module named ensurepip`.
-- `python3 -m compileall src tests adapters`
-  - Resultado: paso; sintaxis Python compila.
-- `.venv/Scripts/python.exe --version`
-  - Resultado: fallo de compatibilidad detectado, `.venv` usa Python 3.11.9.
-  - Causa: `pyproject.toml` requiere Python `>=3.12` y ADR-001 fija Python
-    3.12 para el MVP.
-  - Accion requerida: recrear `.venv` con Python 3.12 antes de ejecutar
-    `pip install -e ".[dev]"`.
-- `find agents examples -type f -name '*.json' -exec python3 -m json.tool {} /dev/null \;`
-  - Resultado: paso; JSON de agentes/examples valido.
-- Busqueda de secretos por nombres `.env`, `*.pem`, `*.key`, `*secret*`,
-  `*token*`
-  - Resultado: no se encontraron archivos de secretos en el checkout.
-- `git status --short`
-  - Resultado inicial: fallo, no era un repositorio Git en esta ruta.
-  - Accion aplicada: se ejecuto `git init -b main` y se agrego `origin` hacia
-    `https://github.com/javierrosado/ariwalabs-agent-platform.git`.
-  - Estado actual: `git status --short --branch` funciona; no hay commits aun.
+- Javier confirmo el 2026-08-08 que las validaciones base se ejecutaron
+  correctamente desde el entorno dev local:
+  - `ariwalabs framework validate-repository --root .`
+  - `ruff check .`
+  - `mypy src`
+  - `pytest`
+- Con esto queda cerrado el bloqueo P0 de preparacion del entorno Python local.
+- Para la integracion OpenAI se ejecuto el 2026-08-08:
+  - `.venv/Scripts/ariwalabs.exe framework validate-repository --root .`
+  - `.venv/Scripts/python.exe -m ruff check .`
+  - `.venv/Scripts/python.exe -m mypy src`
+  - `.venv/Scripts/python.exe -m pytest`
+  - `git diff --check`
+  - Resultado: paso; `pytest` reporto 70 tests.
+- Para Structured Outputs recuperables se ejecuto el 2026-08-08:
+  - `.venv/Scripts/python.exe -m pytest` sobre Model Gateway, Workflow Engine
+    y Growth runtime.
+  - `.venv/Scripts/python.exe -m ruff check` sobre archivos tocados.
+  - `.venv/Scripts/python.exe -m mypy src`
+  - Resultado: paso; el set focalizado reporto 17 tests.
+- Suite completa posterior:
+  - `.venv/Scripts/ariwalabs.exe framework validate-repository --root .`
+  - `.venv/Scripts/python.exe -m ruff check .`
+  - `.venv/Scripts/python.exe -m mypy src`
+  - `.venv/Scripts/python.exe -m pytest`
+  - Resultado: paso; `pytest` reporto 79 tests.
+- Para pruebas de regresion Growth se ejecuto el 2026-08-08:
+  - `.venv/Scripts/python.exe -m pytest tests/integration/test_growth_regression.py`
+  - `.venv/Scripts/python.exe -m ruff check tests/integration/test_growth_regression.py`
+  - Validacion portable de JSON en `tests/fixtures/regression/growth/`.
+  - `.venv/Scripts/python.exe -m mypy src`
+  - `git diff --check`
+  - Resultado: paso; el set nuevo reporto 5 tests.
+- Suite completa posterior:
+  - `.venv/Scripts/ariwalabs.exe framework validate-repository --root .`
+  - `.venv/Scripts/python.exe -m ruff check .`
+  - `.venv/Scripts/python.exe -m mypy src`
+  - `.venv/Scripts/python.exe -m pytest`
+  - Resultado: paso; `pytest` reporto 84 tests.
+- Para control de idempotencia se ejecuto el 2026-08-10:
+  - `.venv/Scripts/python.exe -m pytest` sobre idempotencia y Growth runtime.
+  - `.venv/Scripts/python.exe -m ruff check` sobre archivos tocados.
+  - `.venv/Scripts/python.exe -m mypy src`
+  - Resultado: paso; el set focalizado reporto 9 tests.
+- Suite completa posterior:
+  - `.venv/Scripts/ariwalabs.exe framework validate-repository --root .`
+  - `.venv/Scripts/python.exe -m ruff check .`
+  - `.venv/Scripts/python.exe -m mypy src`
+  - `.venv/Scripts/python.exe -m pytest`
+  - Resultado: paso; `pytest` reporto 90 tests.
+- Para metricas de costos y tokens se ejecuto el 2026-08-10:
+  - `.venv/Scripts/python.exe -m pytest` sobre costos, gateway, OpenAI adapter
+    y factory.
+  - `.venv/Scripts/python.exe -m ruff check` sobre archivos tocados.
+  - `.venv/Scripts/python.exe -m mypy src`
+  - Resultado: paso; el set focalizado reporto 26 tests.
+- Suite completa posterior:
+  - `.venv/Scripts/ariwalabs.exe framework validate-repository --root .`
+  - `.venv/Scripts/python.exe -m ruff check .`
+  - `.venv/Scripts/python.exe -m mypy src`
+  - `.venv/Scripts/python.exe -m pytest`
+  - Resultado: paso; `pytest` reporto 97 tests.
 
 ## Siguiente objetivo recomendado
 
-Implementar el Skill Registry y endurecer la validacion de skills/schemas como
-primer bloque P0, porque habilita validar agentes antes de ejecutar workflows o
-conectar integraciones externas.
+Continuar con P2: Evaluacion independiente, Tool Gateway o Context Engine.

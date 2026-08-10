@@ -1,0 +1,1 @@
+"""Model Adapter contracts."""
