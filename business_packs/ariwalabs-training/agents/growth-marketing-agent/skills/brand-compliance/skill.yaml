@@ -1,0 +1,17 @@
+skill:
+  id: growth-marketing.brand-compliance
+  version: 0.2.0
+  purpose: Valida marca, claims, privacidad y políticas.
+  model_profile: evaluation
+  approval_required: false
+  tools:
+    allowed:
+      - airtable-read
+      - airtable-write-draft
+      - artifact-create
+      - audit-append
+    prohibited:
+      - external-publish
+      - external-message
+      - payment
+  output_schema: ../../schemas/brand-compliance.schema.json

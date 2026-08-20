@@ -1,0 +1,14 @@
+workflow:
+  id: onboard-agent
+  steps:
+    - skill: framework.validate-agent-definition
+    - skill: framework.validate-skill-contract
+      foreach: agent.skills
+    - skill: framework.validate-workflow
+      foreach: agent.workflows
+    - skill: framework.validate-handoff
+      foreach: agent.handoffs
+    - condition: validation_passed
+      skill: framework.register-agent
+    - approval: company-director
+      checkpoint: approve_agent_registration

@@ -1,7 +1,9 @@
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
+from .business_packs import BusinessPackRegistry
 from .config import load_yaml
+from .skill_executor import SkillExecutionRequest
 
 StepResult = dict[str, Any]
 RECOVERABLE_MODEL_STATUSES = {
@@ -27,9 +29,27 @@ EXTERNAL_ACTION_TERMS = {
 }
 
 
+class WorkflowSkillExecutor(Protocol):
+    def execute(self, request: SkillExecutionRequest) -> dict[str, Any]:
+        ...
+
+
 class WorkflowEngine:
-    def __init__(self, root: Path):
+    def __init__(
+        self,
+        root: Path,
+        *,
+        business_pack_id: str | None = None,
+        skill_executor: WorkflowSkillExecutor | None = None,
+        composed_context: dict[str, Any] | None = None,
+        correlation_id: str | None = None,
+    ):
         self.root = root.resolve()
+        self.business_pack_id = business_pack_id
+        self.business_packs = BusinessPackRegistry(self.root)
+        self.skill_executor = skill_executor
+        self.composed_context = composed_context or {}
+        self.correlation_id = correlation_id
 
     def run(
         self,
@@ -37,11 +57,13 @@ class WorkflowEngine:
         agent_id: str,
         workflow_id: str,
         request_input: dict[str, Any],
+        resume_after_checkpoint: str | None = None,
     ) -> dict[str, Any]:
-        agent_path = self.root / "agents" / agent_id
+        agent_path = self.business_packs.agent_path(agent_id, self.business_pack_id)
         workflow = load_yaml(agent_path / "workflows" / f"{workflow_id}.yaml").get("workflow", {})
         context = {
             "agent_id": agent_id,
+            "workflow_id": workflow_id,
             "request_input": request_input,
             "paused": False,
             "blocked": False,
@@ -50,9 +72,16 @@ class WorkflowEngine:
             "errors": [],
             "structured_output_error": None,
         }
+        raw_steps = workflow.get("steps", [])
+        if resume_after_checkpoint is not None:
+            raw_steps = self._steps_after_checkpoint(
+                steps=raw_steps,
+                checkpoint=resume_after_checkpoint,
+                context=context,
+            )
         steps = self._run_steps(
             agent_id=agent_id,
-            steps=workflow.get("steps", []),
+            steps=raw_steps,
             context=context,
             path_prefix=[],
         )
@@ -64,7 +93,28 @@ class WorkflowEngine:
             "errors": context["errors"],
             "approval": context["approval"],
             "structured_output_error": context["structured_output_error"],
+            "resumed_after_checkpoint": resume_after_checkpoint,
         }
+
+    def _steps_after_checkpoint(
+        self,
+        *,
+        steps: Any,
+        checkpoint: str,
+        context: dict[str, Any],
+    ) -> Any:
+        if not isinstance(steps, list):
+            return steps
+        for index, step in enumerate(steps):
+            if (
+                isinstance(step, dict)
+                and step.get("approval") == "company-director"
+                and step.get("checkpoint") == checkpoint
+            ):
+                return steps[index + 1 :]
+        context["blocked"] = True
+        context["errors"].append(f"checkpoint no encontrado {checkpoint}")
+        return []
 
     def _run_steps(
         self,
@@ -139,26 +189,62 @@ class WorkflowEngine:
             return self._block(context, path, "skill", f"skill inexistente {skill_id}")
         model_result = self._model_result_for_skill(context["request_input"], skill_id)
         if model_result is not None:
-            status = model_result.get("status")
-            if status in RECOVERABLE_MODEL_STATUSES:
-                return self._pause_for_structured_output_review(
-                    context=context,
-                    path=path,
-                    skill_id=skill_id,
-                    model_result=model_result,
+            return self._skill_result_from_model_result(
+                context=context,
+                path=path,
+                skill_id=skill_id,
+                model_result=model_result,
+            )
+        if self.skill_executor is not None:
+            try:
+                executed_result = self.skill_executor.execute(
+                    SkillExecutionRequest(
+                        agent_id=agent_id,
+                        workflow_id=str(context["workflow_id"]),
+                        skill_id=skill_id,
+                        business_pack_id=self.business_pack_id,
+                        request_input=context["request_input"],
+                        composed_context=self.composed_context,
+                        correlation_id=self.correlation_id,
+                    )
                 )
-            return {
-                "path": path,
-                "type": "skill",
-                "ref": skill_id,
-                "status": "completed",
-                "model_result": model_result,
-            }
+            except (TypeError, ValueError) as exc:
+                return self._block(context, path, "skill", str(exc))
+            return self._skill_result_from_model_result(
+                context=context,
+                path=path,
+                skill_id=skill_id,
+                model_result=executed_result,
+            )
         return {
             "path": path,
             "type": "skill",
             "ref": skill_id,
             "status": "simulated",
+        }
+
+    def _skill_result_from_model_result(
+        self,
+        *,
+        context: dict[str, Any],
+        path: list[int],
+        skill_id: str,
+        model_result: dict[str, Any],
+    ) -> StepResult:
+        status = model_result.get("status")
+        if status in RECOVERABLE_MODEL_STATUSES:
+            return self._pause_for_structured_output_review(
+                context=context,
+                path=path,
+                skill_id=skill_id,
+                model_result=model_result,
+            )
+        return {
+            "path": path,
+            "type": "skill",
+            "ref": skill_id,
+            "status": "completed",
+            "model_result": model_result,
         }
 
     def _run_parallel(
@@ -278,7 +364,11 @@ class WorkflowEngine:
         workflow_id = step["workflow"]
         if not isinstance(workflow_id, str):
             return self._block(context, path, "workflow", "workflow debe ser string")
-        workflow_path = self.root / "agents" / agent_id / "workflows" / f"{workflow_id}.yaml"
+        workflow_path = (
+            self.business_packs.agent_path(agent_id, self.business_pack_id)
+            / "workflows"
+            / f"{workflow_id}.yaml"
+        )
         if not workflow_path.exists():
             return self._block(context, path, "workflow", f"workflow inexistente {workflow_id}")
         workflow = load_yaml(workflow_path).get("workflow", {})
@@ -297,7 +387,7 @@ class WorkflowEngine:
         }
 
     def _skill_exists(self, agent_id: str, skill_id: str) -> bool:
-        agent_path = self.root / "agents" / agent_id
+        agent_path = self.business_packs.agent_path(agent_id, self.business_pack_id)
         for skill_path in agent_path.glob("skills/*/skill.yaml"):
             skill = load_yaml(skill_path).get("skill", {})
             if skill.get("id") == skill_id:

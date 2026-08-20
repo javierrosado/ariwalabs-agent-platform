@@ -1,511 +1,272 @@
 # AriwaLabs Agent Platform
 
-Plataforma local y versionada para desarrollar, ejecutar y gobernar agentes
-especializados de AriwaLabs desde VS Code y Codex.
+Plataforma local, versionada y gobernada para definir, validar y ejecutar
+agentes. El repositorio esta evolucionando hacia dos capas:
 
-## 1. Objetivo
+- Core Framework: piezas reutilizables para cualquier negocio.
+- Business Packs: activos de dominio para un negocio concreto.
 
-Construir una plataforma multiagente incremental en la que:
+El primer pack de dominio es `ariwalabs-training`, orientado a capacitaciones,
+crecimiento, comunidad y oportunidades futuras de consultoria.
 
-- Javier sea el único operador y aprobador.
-- GitHub sea la fuente de verdad técnica.
-- Airtable sea el sistema operacional inicial.
-- Los modelos OpenAI se consuman mediante perfiles lógicos.
-- Cada agente comparta contexto institucional sin duplicarlo.
-- Skills, workflows, contratos, handoffs y aprobaciones queden versionados.
-- Ningún agente publique, contacte o comprometa presupuesto sin aprobación.
+## 1. Estado actual
 
-## 2. Agentes incluidos
+El core ya incluye runtime local, validadores, workflow engine, context engine,
+model gateway, tool gateway, approval engine, evaluation engine, artifact
+manager, auditoria y persistencia JSON local.
+
+La separacion Core/Business Pack ya esta implementada para el alcance P3:
+
+- manifests en `business_packs/`;
+- `BusinessPackRegistry`;
+- loaders principales con `business_pack_id` opcional;
+- CLI `--business-pack` para validacion y ejecucion;
+- pack real `business_packs/ariwalabs-training/` con agentes, contexto,
+  policies y handoffs propios;
+- pack minimo `business_packs/example-service/` con agente y workflow de prueba.
+
+El backlog P3 esta implementado para el alcance actual: separacion
+Core/Business Pack, Agent Registry, ejecucion real de skills via Model Gateway,
+sincronizacion explicita con Airtable, reanudacion de workflows, Tool Gateway
+ejecutable, Handoff Runtime, errores tipados y metricas de latencia.
+
+## 2. Core Framework
+
+El core debe mantenerse agnostico al negocio. No debe depender de AriwaLabs,
+capacitaciones, alumnos, cohortes, referidos ni oportunidades corporativas.
+
+Componentes core:
+
+- `src/ariwalabs/runtime.py`
+- `src/ariwalabs/agent_registry.py`
+- `src/ariwalabs/business_packs.py`
+- `src/ariwalabs/skill_registry.py`
+- `src/ariwalabs/handoff_registry.py`
+- `src/ariwalabs/handoff_runtime.py`
+- `src/ariwalabs/workflow_engine.py`
+- `src/ariwalabs/context_engine.py`
+- `src/ariwalabs/skill_executor.py`
+- `src/ariwalabs/model_gateway.py`
+- `src/ariwalabs/tool_gateway.py`
+- `src/ariwalabs/approval_engine.py`
+- `src/ariwalabs/evaluation_engine.py`
+- `src/ariwalabs/artifact_manager.py`
+- `src/ariwalabs/audit.py`
+- `src/ariwalabs/repository.py`
+- `adapters/`
+
+## 3. Business Packs
+
+Los packs de dominio declaran agentes, contexto, policies, handoffs y activos
+operacionales de un negocio concreto.
+
+Packs actuales:
+
+- `business_packs/ariwalabs-training/`: pack real de AriwaLabs.
+- `business_packs/example-service/`: pack minimo para probar reusabilidad.
+
+El pack AriwaLabs ya contiene copias fisicas de sus agentes, contexto, policies
+y handoffs. Las rutas historicas `agents/`, `shared/` y `docs/handoffs/` se
+mantienen para compatibilidad del modo default.
+
+## 4. Agentes incluidos
 
 ### Framework Agent
 
-Gobierna el ciclo de vida técnico de los agentes.
+Gobierna el ciclo de vida tecnico de agentes, skills, workflows, handoffs y
+releases. No ejecuta tareas comerciales.
 
-Responsabilidades:
-
-- validar definiciones de agentes;
-- validar contratos de skills;
-- validar workflows;
-- validar handoffs;
-- registrar agentes;
-- generar reportes de cumplimiento;
-- preparar releases;
-- bloquear cambios incompatibles.
-
-No ejecuta tareas de marketing ni de negocio.
+Ruta default: `agents/framework-agent/`
+Ruta pack: `business_packs/ariwalabs-training/agents/framework-agent/`
 
 ### Growth & Marketing Agent
 
-Gestiona el crecimiento inicial de AriwaLabs mediante capacitaciones.
+Gestiona crecimiento inicial para capacitaciones AriwaLabs: segmentacion,
+propuesta de valor, campanas, contenido, bootcamps, journey, referidos,
+analitica y deteccion de oportunidades.
 
-Responsabilidades:
+Ruta default: `agents/growth-marketing-agent/`
+Ruta pack: `business_packs/ariwalabs-training/agents/growth-marketing-agent/`
 
-- segmentación;
-- propuesta de valor;
-- diseño de campañas;
-- planificación de contenido;
-- bootcamps;
-- recorrido del alumno;
-- referidos;
-- detección de señales empresariales;
-- analítica de crecimiento;
-- cumplimiento de marca.
+Este agente no publica, no compra publicidad, no contacta empresas y no registra
+oportunidades corporativas sin aprobacion.
 
-No publica, no compra publicidad, no contacta empresas y no registra
-oportunidades corporativas sin aprobación.
+## 5. Arquitectura y backlog
 
-## 3. Arquitectura
+Lectura recomendada:
 
-El diagrama detallado de componentes y relaciones esta en
-`docs/architecture/framework-overview.md`.
+1. `docs/architecture/01-framework-overview.md`
+2. `docs/architecture/21-core-business-pack-separation.md`
+3. `docs/current-state.md`
+4. `docs/implementation-backlog.md`
+5. `docs/roadmap/implementation-roadmap.md`
 
-```text
-Director
-  |
-  +-- CLI / VS Code
-         |
-         +-- Framework Agent
-         |      +-- valida agentes, skills, workflows y handoffs
-         |
-         +-- Agent Runtime
-                +-- Context Engine
-                +-- Workflow Engine
-                +-- Model Gateway
-                +-- Tool Gateway
-                +-- Approval Engine
-                +-- Evaluation Engine
-                +-- Artifact Manager
-                +-- Audit
-                |
-                +-- Growth & Marketing Agent
-                       +-- Skills
-                       +-- Workflows
-                       +-- Handoffs
-```
+El backlog es la fuente operativa para el siguiente trabajo. El siguiente paso
+previsto es definir el incremento posterior a P3: automatizacion gobernada de
+tools/handoffs, persistencia operacional ampliada y calibracion de evaluaciones
+por dominio.
 
-## 4. Fuente de verdad por tipo de información
+## 6. Fuente de verdad
 
-| Información | Fuente |
+| Informacion | Fuente |
 |---|---|
-| Código, prompts, schemas y workflows | GitHub |
-| Contexto institucional | `shared/context` |
-| Políticas | `shared/policies` |
-| Operación de negocio | Airtable |
-| Artefactos grandes | Local inicialmente; Drive/Blob después |
-| Trazabilidad técnica | JSON local inicialmente |
+| Codigo, prompts, schemas y workflows | GitHub |
+| Core framework | `src/ariwalabs/` |
+| Business packs | `business_packs/` |
+| Agentes default | `agents/` |
+| Agentes por pack | `business_packs/*/agents/` |
+| Contexto default | `shared/context/` |
+| Contexto por pack | `business_packs/*/context/` |
+| Politicas core | `framework/policies/` |
+| Politicas por pack | `business_packs/*/policies/` |
+| Handoffs default | `docs/handoffs/` |
+| Handoffs por pack | `business_packs/*/handoffs/` |
+| Arquitectura | `docs/architecture/` |
+| Backlog | `docs/implementation-backlog.md` |
+| Operacion de negocio inicial | Airtable |
+| Trazabilidad local | `runtime/data/` |
 | Secretos | `.env`, nunca GitHub |
-
-## 5. Handoffs
-
-### Framework Agent -> Growth & Marketing Agent
-
-El Framework Agent entrega:
-
-- definición validada;
-- versión aprobada;
-- skills registradas;
-- workflows validados;
-- políticas aplicables;
-- reporte de release.
-
-### Growth & Marketing Agent -> Director
-
-Entrega:
-
-- estrategia;
-- campañas;
-- calendarios;
-- briefs;
-- riesgos;
-- métricas;
-- solicitudes de aprobación;
-- oportunidades potenciales.
-
-### Growth & Marketing Agent -> futuros agentes
-
-- `Training Program Agent`: brief de curso, audiencia y propuesta de valor.
-- `Student Success Agent`: alumno matriculado y journey inicial.
-- `Corporate Opportunity Agent`: señal empresarial aprobada.
-- `Content Agent`: brief de contenido aprobado.
-- `Sales Proposal Agent`: oportunidad corporativa aprobada.
-
-Los contratos de handoff se documentan en `docs/handoffs`.
-
-## 6. Roadmap
-
-### Fase 0 - Base local
-
-- VS Code.
-- Python virtual environment.
-- GitHub.
-- contexto compartido;
-- Framework Agent;
-- Growth & Marketing Agent;
-- CLI;
-- JSON local;
-- pruebas.
-
-### Fase 1 - Airtable
-
-- diseñar base AriwaLabs Operations;
-- implementar Airtable Adapter;
-- tablas People, Organizations, Programs, Cohorts, Campaigns, ContentItems,
-  Events, Referrals, Opportunities, Approvals, AgentExecutions y Artifacts;
-- lectura y escritura controlada;
-- aprobaciones persistentes.
-
-### Fase 2 - Model Gateway
-
-- conectar modelos OpenAI;
-- perfiles `reasoning`, `generation`, `evaluation`, `fast_structured`;
-- structured outputs;
-- reintentos;
-- límites;
-- costos;
-- pruebas con modelos simulados y reales.
-
-### Fase 3 - Growth Agent productivo
-
-- campaña completa;
-- calendario;
-- bootcamp;
-- journey;
-- referidos;
-- analytics;
-- aprobaciones;
-- artefactos.
-
-### Fase 4 - Integraciones
-
-- Airtable Forms;
-- email transaccional;
-- WhatsApp Business Platform;
-- calendario;
-- publicación social semimanual;
-- LinkedIn inicialmente manual.
-
-### Fase 5 - Segundo agente
-
-Implementar `Training Program Agent` sobre la misma base.
-
-### Fase 6 - Cloud
-
-- Azure OpenAI o Microsoft Foundry;
-- almacenamiento de artefactos;
-- Application Insights;
-- despliegue controlado.
 
 ## 7. Entorno local
 
-No se requieren contenedores durante la primera etapa. El proyecto requiere
-Python 3.12, tal como queda definido en `pyproject.toml` y en el ADR-001.
-
-Objetivo tecnico: preparar un entorno Python local, reproducible y alineado con
-el MVP para ejecutar el CLI `ariwalabs`, validar el repositorio y probar agentes
-sin Docker ni servicios externos.
-
-Al terminar estos pasos se espera tener una `.venv` activa con Python 3.12, el
-paquete instalado en modo editable con dependencias de desarrollo, el comando
-`ariwalabs` disponible y capacidad de ejecutar la validacion del repositorio, una
-campaña de ejemplo y la consulta de ejecuciones locales.
-
-Paso 1: comprobar la version de Python que esta activa en la terminal. Esto
-evita crear el entorno virtual con una version incompatible con el proyecto.
-
-```bash
-python --version
-```
-
-Si la version activa no es Python 3.12, elimina la venv anterior y creala con
-un interprete 3.12.
+No se usan contenedores durante el MVP. El proyecto usa Python 3.12 y entorno
+virtual local.
 
 Windows PowerShell:
 
-Paso 2: recrear el entorno virtual en Windows con Python 3.12 y activarlo. Esto
-aisla las dependencias del proyecto dentro de `.venv`.
-
 ```powershell
-Remove-Item -Recurse -Force .venv
 py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
-```
-
-WSL/Linux:
-
-Paso 2: recrear el entorno virtual en WSL/Linux con Python 3.12 y activarlo.
-Esto aisla las dependencias del proyecto dentro de `.venv`.
-
-```bash
-rm -rf .venv
-python3.12 -m venv .venv
-source .venv/bin/activate
-```
-
-Instalacion:
-
-Paso 3: actualizar `pip` e instalar el paquete en modo editable con las
-dependencias de desarrollo. Esto deja disponible el comando `ariwalabs` y las
-herramientas de validacion local.
-
-```bash
 python -m pip install --upgrade pip
 pip install -e ".[dev]"
 ```
 
-Ejecutar validación del repositorio:
-
-Paso 4: validar que las definiciones de agentes, skills, workflows y contexto
-compartido cumplen las reglas basicas del framework.
+WSL/Linux:
 
 ```bash
-ariwalabs framework validate-repository
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
 ```
 
-Ejecutar campaña de ejemplo:
+## 8. Comandos principales
 
-Paso 5: crear una ejecucion local usando un request de ejemplo. Esto permite
-confirmar que el runtime puede cargar el agente, el workflow y persistir una
-ejecucion pendiente de aprobacion humana.
+Validar el repositorio completo:
 
 ```bash
-ariwalabs agent run examples/requests/create-training-campaign.json
+ariwalabs framework validate-repository --root .
 ```
 
-Listar ejecuciones:
-
-Paso 6: revisar las ejecuciones locales guardadas por el runtime. Esto confirma
-que la persistencia JSON local esta funcionando.
+Validar usando el pack AriwaLabs:
 
 ```bash
-ariwalabs execution list
+ariwalabs framework validate-repository --root . --business-pack ariwalabs-training
 ```
 
-## 8. Flujo GitHub recomendado
+Ejecutar un request de agente:
 
-Objetivo: asegurar que cada cambio tecnico quede versionado, revisable y
-trazable en GitHub, que es la fuente de verdad del proyecto. Este flujo debe
-usarse cada vez que se modifique codigo, agentes, skills, workflows, schemas,
-prompts, politicas o documentacion relevante.
-
-La idea es trabajar en ramas cortas, validar localmente antes de publicar y
-dejar una revision explicita antes de integrar cambios a `main`.
-
-```text
-main
-  +-- feature/framework-validation
-  +-- feature/airtable-adapter
-  +-- feature/model-gateway
+```bash
+ariwalabs agent run examples/requests/create-training-campaign.json --root .
 ```
 
-Por cada cambio:
+Ejecutar un request usando business pack:
 
-1. Crear una rama desde `main`.
-   Objetivo: aislar el cambio para que pueda revisarse sin mezclarlo con trabajo
-   no relacionado.
-   Como hacerlo: actualizar `main` y crear una rama descriptiva.
+```bash
+ariwalabs agent run examples/requests/create-training-campaign.json --root . --business-pack ariwalabs-training
+```
 
-   ```bash
-   git switch main
-   git pull
-   git switch -c feature/nombre-del-cambio
-   ```
+Listar ejecuciones locales:
 
-2. Modificar los archivos necesarios.
-   Objetivo: mantener el alcance pequeno y alineado con la tarea, evitando
-   refactors o cambios paralelos que dificulten la revision.
-   Como hacerlo: editar solo los archivos relacionados con la tarea, revisar el
-   alcance y confirmar los detalles del diff.
+```bash
+ariwalabs execution list --root .
+```
 
-   ```bash
-   git status --short
-   git diff
-   ```
+Listar approvals pendientes:
 
-3. Ejecutar validaciones locales.
-   Objetivo: detectar errores de framework, estilo, tipado y comportamiento antes
-   de publicar el cambio.
-   Como hacerlo: con la `.venv` activa, ejecutar estos comandos desde la raiz del
-   repositorio.
+```bash
+ariwalabs approval list --root .
+```
 
-   ```bash
-   ariwalabs framework validate-repository --root .
-   ruff check .
-   mypy src
-   pytest
-   ```
+Reanudar una ejecucion aprobada:
 
-4. Corregir hallazgos de validacion.
-   Objetivo: no avanzar a commit si el framework, el linter, el tipado o las
-   pruebas reportan errores.
-   Como hacerlo: leer la salida de cada comando, corregir los archivos afectados
-   y repetir las validaciones hasta que pasen.
+```bash
+ariwalabs execution resume exec-<id> --root .
+```
 
-   ```bash
-   ariwalabs framework validate-repository --root .
-   ruff check .
-   mypy src
-   pytest
-   ```
+Validar Airtable sin imprimir secretos:
 
-5. Crear un commit.
-   Objetivo: guardar una unidad logica de cambio con un mensaje claro sobre lo
-   que se modifico y por que.
-   Como hacerlo: revisar el diff final, agregar solo los archivos del cambio y
-   crear el commit.
+```bash
+ariwalabs airtable validate-access --root . --env-file .env.example
+```
 
-   ```bash
-   git status --short
-   git diff
-   git add <archivo>
-   git commit -m "mensaje claro"
-   ```
+Sincronizar una ejecucion local hacia Airtable:
 
-6. Hacer push de la rama.
-   Objetivo: publicar el cambio en GitHub para conservar trazabilidad y permitir
-   revision.
-   Como hacerlo: subir la rama al remoto. La primera vez usa `-u`; despues basta
-   `git push`.
+```bash
+ariwalabs airtable sync-execution exec-<id> --root . --env-file .env
+```
 
-   ```bash
-   git push -u origin feature/nombre-del-cambio
-   git push
-   ```
+Ejecutar un handoff aprobado desde payloads JSON:
 
-7. Abrir un pull request.
-   Objetivo: explicar el cambio, listar pruebas ejecutadas y dejar visible el
-   impacto antes de integrarlo.
-   Como hacerlo: abrir el PR en GitHub desde la rama publicada, completar
-   resumen, archivos relevantes, pruebas ejecutadas, riesgos y pendientes.
+```bash
+ariwalabs handoff execute growth-marketing-to-director \
+  --root . \
+  --business-pack ariwalabs-training \
+  --input runtime/data/handoff-input.json \
+  --output runtime/data/handoff-output.json \
+  --approved \
+  --approval-id appr-<id>
+```
 
-   ```text
-   Resumen:
-   - Que cambio se hizo.
+Listar agentes registrados:
 
-   Pruebas:
-   - ariwalabs framework validate-repository --root .
-   - ruff check .
-   - mypy src
-   - pytest
+```bash
+ariwalabs agent-registry list --root .
+ariwalabs agent-registry list --root . --business-pack ariwalabs-training
+```
 
-   Riesgos o pendientes:
-   - Indicar si aplica.
-   ```
+Ver un agente registrado:
 
-8. Realizar revision propia.
-   Objetivo: leer el diff completo, verificar que no hay secretos, archivos
-   temporales, datos sensibles ni cambios fuera de alcance.
-   Como hacerlo: revisar la pestana de cambios del PR o ejecutar estos comandos;
-   confirmar que `.env`, credenciales y artefactos locales no estan incluidos.
+```bash
+ariwalabs agent-registry show growth-marketing-agent --root . --business-pack ariwalabs-training
+```
 
-   ```bash
-   git status --short
-   git diff main...HEAD
-   ```
+## 9. Validaciones antes de cerrar cambios
 
-9. Hacer merge.
-   Objetivo: integrar el cambio aprobado a `main` solo cuando las validaciones y
-   la revision sean satisfactorias.
-   Como hacerlo: usar el boton de merge en GitHub cuando el PR este aprobado y
-   las validaciones esten en verde; despues actualizar el checkout local.
+Ejecutar como minimo:
 
-   ```bash
-   git switch main
-   git pull
-   ```
+```bash
+ariwalabs framework validate-repository --root .
+ariwalabs framework validate-repository --root . --business-pack ariwalabs-training
+ruff check .
+mypy src
+pytest
+```
 
-## 9. Reglas de implementación
+Para cambios documentales, tambien revisar enlaces/rutas internas de Markdown
+cuando se renombren archivos.
 
-Objetivo: mantener el framework gobernable, auditable y seguro mientras crece.
-Estas reglas deben usarse como checklist antes de implementar, durante la
-revision del diff y antes de declarar listo un cambio.
+## 10. Reglas no negociables
 
-1. No duplicar contexto dentro de agentes.
-   Uso: referencia `shared/context/` desde agentes, prompts, skills o workflows.
-   Objetivo: evitar que existan versiones contradictorias del contexto
-   institucional.
+- Javier, `company-director`, es el unico operador y aprobador del MVP.
+- GitHub es la fuente de verdad tecnica.
+- No introducir Docker durante el MVP.
+- No usar SQLite en el MVP.
+- Los secretos viven en `.env` y no se versionan.
+- Las skills usan perfiles logicos de modelo.
+- Ninguna skill llama APIs externas directamente.
+- Toda integracion pasa por `adapters/` o Tool Gateway.
+- Toda accion externa, comercial, reputacional o de release requiere aprobacion.
+- El Framework Agent gobierna agentes; no ejecuta tareas comerciales.
 
-2. No llamar directamente al proveedor de IA desde una skill.
-   Uso: consume modelos mediante perfiles logicos y el Model Gateway.
-   Objetivo: permitir cambiar proveedores o modelos sin reescribir skills.
+## 11. Siguiente trabajo
 
-3. No llamar directamente a Airtable desde una skill.
-   Uso: encapsula cualquier lectura o escritura en `adapters/` o en el futuro
-   Tool Gateway.
-   Objetivo: centralizar permisos, errores, idempotencia y auditoria de datos.
+Definir el siguiente incremento posterior a P3, priorizando:
 
-4. Toda integracion debe pasar por un adapter/tool.
-   Uso: crea o extiende contratos de integracion antes de conectar servicios
-   externos.
-   Objetivo: impedir APIs paralelas y mantener un punto controlado de acceso.
+1. Automatizar invocaciones de Tool Gateway desde workflows solo con contrato y
+   aprobacion aplicable.
+2. Sincronizar handoffs con una tabla operacional canonica.
+3. Calibrar rubricas y evaluaciones por business pack.
 
-5. Todo output debe tener schema.
-   Uso: define o actualiza JSON Schemas para respuestas de skills, handoffs y
-   reportes.
-   Objetivo: validar resultados automaticamente y reducir outputs ambiguos.
-
-6. Todo workflow debe tener estados y aprobacion.
-   Uso: declara checkpoints y estados de ejecucion, especialmente antes de
-   acciones externas o comerciales.
-   Objetivo: conservar control humano y trazabilidad del proceso.
-
-7. Todo handoff debe tener contrato.
-   Uso: documenta productor, consumidor, payload, aprobaciones, errores y
-   persistencia esperada.
-   Objetivo: que un agente pueda entregar trabajo a otro sin supuestos
-   implicitos.
-
-8. Toda ejecucion debe tener ID y version.
-   Uso: registra identificadores estables para ejecuciones, artefactos y
-   versiones de agente/workflow.
-   Objetivo: poder auditar que version produjo cada resultado.
-
-9. Todo release debe pasar por Framework Agent.
-   Uso: ejecuta la revision tecnica del framework antes de declarar listo un
-   agente, skill, workflow o contrato.
-   Objetivo: bloquear cambios incompatibles antes de que afecten la operacion.
-
-## 10. Prompts para Codex
-
-Objetivo: usar prompts operativos versionados para pedir trabajo a Codex de
-forma consistente. Los prompts en `prompts/codex` ayudan a cargar contexto,
-mantener las reglas del repositorio y pedir entregables verificables.
-
-Como deben usarse:
-
-1. Abrir el prompt que corresponde a la tarea.
-   Objetivo: elegir una instruccion base alineada con el tipo de cambio.
-
-2. Reemplazar los placeholders como `<COMPONENT>`, `<AGENT_ID>` o `<SKILL_ID>`.
-   Objetivo: convertir el prompt generico en una instruccion concreta.
-
-3. Pegar el prompt en Codex junto con cualquier restriccion adicional.
-   Objetivo: iniciar la tarea con contexto, alcance y criterios de validacion
-   claros.
-
-4. Revisar el plan, archivos propuestos y pruebas antes de aprobar cambios
-   sensibles.
-   Objetivo: conservar aprobacion humana y evitar impactos externos no deseados.
-
-Prompts principales:
-
-- `00-load-project-context.md`: usarlo al iniciar una sesion o antes de una
-  tarea amplia. Sirve para que Codex lea contexto, politicas, agente afectado,
-  riesgos, archivos y pruebas antes de modificar.
-- `01-implement-framework-component.md`: usarlo para construir o mejorar piezas
-  del framework, como runtime, validadores, gateways, auditoria o registries.
-- `02-create-new-agent.md`: usarlo cuando se necesite definir un agente nuevo
-  con `agent.yaml`, skills, workflows, schemas, handoffs, aprobaciones y pruebas.
-- `03-create-new-skill.md`: usarlo para crear una skill nueva dentro de un
-  agente existente, con input schema, output schema, permisos, errores y
-  pruebas.
-- `04-integrate-airtable.md`: usarlo cuando se implemente o amplie el Airtable
-  Adapter. No debe usarse para llamar Airtable directamente desde una skill.
-- `05-review-release.md`: usarlo antes de declarar listo un agente o release.
-  Sirve para revisar definicion, contratos, politicas, pruebas, secretos y
-  compatibilidad.
-
-## 11. Limitaciones actuales
-
-El repositorio incluye estructura, validadores, runtime local y persistencia
-JSON. No incluye credenciales ni conexiones productivas con OpenAI, Airtable,
-WhatsApp, LinkedIn o Azure. Los adapters contienen contratos y stubs seguros.
+Cada incremento debe actualizar docs, backlog/current-state cuando aplique,
+session log y pruebas.

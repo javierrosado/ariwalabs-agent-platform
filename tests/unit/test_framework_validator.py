@@ -93,3 +93,48 @@ def test_validator_blocks_permissive_skill_schema(tmp_path: Path) -> None:
     assert any("required debe ser una lista no vacia" in message for message in messages)
     assert any("properties debe ser un objeto no vacio" in message for message in messages)
     assert any("additionalProperties debe ser false" in message for message in messages)
+
+
+def test_validator_blocks_context_outside_shared(tmp_path: Path) -> None:
+    agent_dir = tmp_path / "agents" / "sample-agent"
+    workflow_dir = agent_dir / "workflows"
+    workflow_dir.mkdir(parents=True)
+
+    (agent_dir / "agent.yaml").write_text(
+        dedent(
+            """
+            agent:
+              id: sample-agent
+              name: Sample Agent
+              version: 0.1.0
+              purpose: Validate context behavior.
+              owner: company-director
+              autonomy: supervised
+              shared_context:
+                - docs/project-context.md
+              skills: []
+              workflows:
+                - sample-workflow
+            """
+        ).strip(),
+        encoding="utf-8",
+    )
+    (workflow_dir / "sample-workflow.yaml").write_text(
+        dedent(
+            """
+            workflow:
+              id: sample-workflow
+              steps: []
+            """
+        ).strip(),
+        encoding="utf-8",
+    )
+
+    result = FrameworkValidator(tmp_path).validate_repository()
+
+    assert result["status"] == "blocked"
+    messages = [finding["message"] for finding in result["findings"]]
+    assert any(
+        "contexto fuera de rutas permitidas docs/project-context.md" in message
+        for message in messages
+    )

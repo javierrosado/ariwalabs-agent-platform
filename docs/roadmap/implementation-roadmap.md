@@ -1,49 +1,108 @@
-# Roadmap de implementación
+# Roadmap de implementacion
 
-## Sprint 1
+Fecha de actualizacion: 2026-08-15
 
-- validar estructura del repositorio;
-- completar Agent Registry;
-- completar Skill Registry;
-- CLI para validación;
-- pruebas de schemas.
+## Norte arquitectonico
 
-## Sprint 2
+Separar el Core Framework reutilizable de los Business Packs de dominio. El
+primer pack activo es `ariwalabs-training`; `example-service` valida que el
+core puede operar con un dominio no AriwaLabs.
 
-- Approval Engine;
-- Audit Log;
-- Artifact Manager;
-- persistencia local;
-- ejecución del workflow de campaña.
+## Fase 1 - Frontera Core / Business Pack
 
-## Sprint 3
+Estado: implementado para el alcance P3.
 
-- Airtable Adapter;
-- diseño de tablas;
-- lectura de contexto operacional;
-- registro de campañas, aprobaciones y ejecuciones.
+- Mantener documentada la frontera Core Framework vs AriwaLabs Training Pack.
+- Usar `business_packs/ariwalabs-training/pack.yaml` como manifest de dominio.
+- Validar manifests con `BusinessPackRegistry`.
+- Usar `business_pack_id` en loaders, runtime y CLI.
+- Separar policies core de policies AriwaLabs.
+- Resolver agentes, contexto, policies y handoffs desde rutas fisicas de pack.
+- Validar `example-service` como pack minimo no AriwaLabs.
 
-## Sprint 4
+## Fase 2 - Agent Registry multipack
 
-- Model Gateway OpenAI;
-- structured outputs;
-- evaluación independiente;
-- control de costo.
+Estado: implementado para el alcance P3.
 
-## Sprint 5
+- Implementar `src/ariwalabs/agent_registry.py`.
+- Registrar agentes por `business_pack_id`, version, owner y estado de release.
+- Validar skills, workflows, schemas, rubricas, contexto, policies y handoffs.
+- Integrar con `FrameworkValidator`.
+- Preparar governance local para releases sensibles.
 
-- bootcamp workflow;
-- content plan;
-- referral workflow;
-- opportunity detection.
+## Fase 3 - Reanudacion de approvals
 
-## Criterio para crear el siguiente agente
+Estado: implementado para el alcance P3.
 
-No iniciar Training Program Agent hasta que Growth & Marketing Agent:
+- Continuar ejecuciones en `approved_pending_resume`.
+- Reanudar desde checkpoint sin duplicar approvals, artifacts ni acciones.
+- Auditar la decision y la reanudacion.
+- Mantener resume como accion CLI explicita.
 
-- ejecute tres campañas de prueba;
-- genere artefactos conformes;
+## Fase 4 - Skills reales via Model Gateway
+
+Estado: implementado para el alcance P3.
+
+- Cargar prompt, schema, input y contexto compuesto por skill.
+- Invocar `ModelGateway.generate_structured()`.
+- Persistir outputs validados.
+- Mantener pausa recuperable para structured outputs invalidos, incompletos o
+  rechazados.
+- Mantener fixtures `__skill_results__` para regresion.
+
+## Fase 5 - Tool Gateway ejecutable
+
+Estado: implementado para el alcance P3.
+
+- Definir contrato input/output por tool.
+- Despachar tools hacia adapters permitidos.
+- Bloquear acciones externas no autorizadas.
+- Auditar ejecuciones de tools con duracion.
+
+## Fase 6 - Sincronizacion operacional Airtable
+
+Estado: implementado para el alcance P3.
+
+- Sincronizar `AgentExecutions`, `Approvals` y `Artifacts`.
+- Mantener idempotencia.
+- No exponer secretos ni payloads sensibles.
+- Confirmar vistas operativas para Javier.
+- Mantener la sincronizacion como accion CLI explicita.
+
+## Fase 7 - Handoffs en runtime
+
+Estado: implementado para el alcance P3.
+
+- Ejecutar handoffs aprobados como transiciones versionadas.
+- Persistir payload, estado, errores e idempotencia.
+- Conectar con futura persistencia operacional cuando exista tabla canonica.
+
+## Fase 8 - Robustez y observabilidad
+
+Estado: implementado para el alcance P3.
+
+- Errores tipados en runtime y CLI.
+- Latencia por ejecucion, modelo, tool y adapter.
+- Criterios de evaluacion calibrados por dominio.
+
+## Fase 9 - Integraciones futuras
+
+Estado: futuro.
+
+- WhatsApp Business Platform.
+- Email transaccional.
+- Calendario Google o Microsoft.
+- Publicacion social semimanual.
+- Pasarela de pago.
+- Azure o Microsoft Foundry.
+
+## Criterio para crear nuevos agentes
+
+No iniciar nuevos agentes de dominio hasta que Growth & Marketing Agent:
+
+- ejecute workflows principales con skills reales o fixtures aprobados;
+- genere artifacts conformes;
 - registre aprobaciones;
-- persista en Airtable;
-- pase pruebas de regresión;
-- tenga al menos 85% en la rúbrica interna.
+- sincronice ejecuciones relevantes con Airtable;
+- pase pruebas de regresion;
+- tenga rubricas internas calibradas.

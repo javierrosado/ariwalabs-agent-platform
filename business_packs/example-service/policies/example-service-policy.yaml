@@ -1,0 +1,7 @@
+domain_policies:
+  business_pack_id: example-service
+  mandatory_human_approval:
+    - service_offer_release
+  prohibited:
+    - publish_without_approval
+    - expose_secrets

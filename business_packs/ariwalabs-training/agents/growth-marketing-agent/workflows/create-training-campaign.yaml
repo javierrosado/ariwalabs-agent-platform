@@ -1,0 +1,13 @@
+workflow:
+  id: create-training-campaign
+  steps:
+    - skill: growth-marketing.request-validation
+    - parallel:
+        - skill: growth-marketing.audience-segmentation
+        - skill: growth-marketing.value-proposition
+    - skill: growth-marketing.campaign-design
+    - skill: growth-marketing.content-planning
+    - skill: growth-marketing.brand-compliance
+    - approval: company-director
+      checkpoint: approve_campaign
+    - action: persist_artifacts

@@ -1,0 +1,7 @@
+skill:
+  id: framework.validate-handoff
+  version: 0.1.0
+  purpose: Valida contratos entre agentes y condiciones de transferencia.
+  model_profile: fast_structured
+  approval_required: false
+  output_schema: ../../schemas/framework-report.schema.json

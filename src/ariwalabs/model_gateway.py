@@ -1,4 +1,5 @@
 from pathlib import Path
+from time import perf_counter
 from typing import Any
 from uuid import uuid4
 
@@ -31,6 +32,7 @@ class ModelGateway:
         skill_id: str | None = None,
     ) -> ModelResult:
         request_id = f"model-{uuid4().hex[:12]}"
+        started_at = perf_counter()
         self._validate_request(
             profile=profile,
             system_prompt=system_prompt,
@@ -56,26 +58,37 @@ class ModelGateway:
                 output_schema=output_schema,
             )
         except ModelGatewayError:
+            duration_ms = self._duration_ms(started_at)
             self.audit.error(
                 "model.request.failed",
                 error_type="ModelGatewayError",
                 message="adapter failure",
                 correlation_id=correlation_id or request_id,
-                metadata={"request_id": request_id, "profile": profile},
+                metadata={
+                    "request_id": request_id,
+                    "profile": profile,
+                    "duration_ms": duration_ms,
+                },
             )
             raise
         except Exception as exc:
+            duration_ms = self._duration_ms(started_at)
             self.audit.error(
                 "model.request.failed",
                 error_type=exc.__class__.__name__,
                 message=str(exc),
                 correlation_id=correlation_id or request_id,
-                metadata={"request_id": request_id, "profile": profile},
+                metadata={
+                    "request_id": request_id,
+                    "profile": profile,
+                    "duration_ms": duration_ms,
+                },
             )
             msg = "adapter de modelo fallo"
             raise ModelProviderError(msg) from exc
 
         self._validate_result(result)
+        duration_ms = self._duration_ms(started_at)
         self.audit.append(
             "model.request.completed",
             {
@@ -85,6 +98,7 @@ class ModelGateway:
                 "has_usage": isinstance(result.get("usage"), dict),
                 "has_estimated_cost": isinstance(result.get("estimated_cost"), dict),
                 "skill_id": skill_id,
+                "duration_ms": duration_ms,
             },
             correlation_id=correlation_id or request_id,
         )
@@ -251,3 +265,6 @@ class ModelGateway:
                 "retryable": retryable,
             },
         }
+
+    def _duration_ms(self, started_at: float) -> int:
+        return max(0, round((perf_counter() - started_at) * 1000))

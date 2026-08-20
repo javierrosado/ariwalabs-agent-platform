@@ -1,0 +1,21 @@
+business_pack:
+  id: example-service
+  name: Example Service Pack
+  version: 0.1.0
+  status: example
+  owner_role: company-director
+  owner: company-director
+  purpose: >
+    Pack minimo de ejemplo para comprobar que el core framework puede validar
+    manifests de dominio no AriwaLabs.
+  domain_assets:
+    agents:
+      - business_packs/example-service/agents/service-ops-agent
+    context:
+      - business_packs/example-service/context/service-profile.yaml
+    policies:
+      - framework/policies/core-agent-policy.yaml
+      - business_packs/example-service/policies/example-service-policy.yaml
+    handoffs: []
+  pending_extraction:
+    - Ampliar ejemplo cuando Agent Registry soporte releases multipack.

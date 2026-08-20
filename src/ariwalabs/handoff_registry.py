@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .business_packs import BusinessPackRegistry
 from .config import load_yaml
 
 Finding = dict[str, str]
@@ -52,20 +53,24 @@ class HandoffRecord:
 
 
 class HandoffRegistry:
-    def __init__(self, root: Path):
+    def __init__(self, root: Path, *, business_pack_id: str | None = None):
         self.root = root.resolve()
+        self.business_pack_id = business_pack_id
+        self.business_packs = BusinessPackRegistry(self.root)
 
     def validate_repository(self) -> list[Finding]:
         findings: list[Finding] = []
-        docs_dir = self.root / "docs" / "handoffs"
-        if not docs_dir.exists():
+        handoff_files = self.business_packs.handoff_files(self.business_pack_id)
+        if not handoff_files:
+            if self.business_pack_id is not None:
+                return []
             return [
                 self._finding("error", "docs/handoffs: directorio de handoffs inexistente")
             ]
 
         records: list[HandoffRecord] = []
         seen_ids: dict[str, Path] = {}
-        for path in sorted(docs_dir.glob("*.yaml")):
+        for path in handoff_files:
             load_findings, file_records = self._load_handoff_file(path)
             findings.extend(load_findings)
             for record in file_records:
@@ -91,6 +96,24 @@ class HandoffRegistry:
         for record in records:
             findings.extend(self._validate_record(record, agent_ids))
         return findings
+
+    def list_handoffs(self) -> list[HandoffRecord]:
+        records: list[HandoffRecord] = []
+        for path in self.business_packs.handoff_files(self.business_pack_id):
+            findings, file_records = self._load_handoff_file(path)
+            if findings:
+                messages = "; ".join(finding["message"] for finding in findings)
+                msg = f"handoffs invalidos: {messages}"
+                raise ValueError(msg)
+            records.extend(file_records)
+        return records
+
+    def get_handoff(self, handoff_id: str) -> HandoffRecord:
+        for record in self.list_handoffs():
+            if record.handoff_id == handoff_id:
+                return record
+        msg = f"handoff inexistente {handoff_id}"
+        raise KeyError(msg)
 
     def _load_handoff_file(self, path: Path) -> tuple[list[Finding], list[HandoffRecord]]:
         findings: list[Finding] = []
@@ -380,11 +403,9 @@ class HandoffRegistry:
         return value
 
     def _agent_ids(self) -> set[str]:
-        agents_dir = self.root / "agents"
-        if not agents_dir.exists():
-            return set()
         ids: set[str] = set()
-        for agent_yaml in agents_dir.glob("*/agent.yaml"):
+        for agent_dir in self.business_packs.agent_dirs(self.business_pack_id):
+            agent_yaml = agent_dir / "agent.yaml"
             agent_config = load_yaml(agent_yaml).get("agent", {})
             agent_id = agent_config.get("id")
             if isinstance(agent_id, str):

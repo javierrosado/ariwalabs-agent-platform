@@ -1,0 +1,18 @@
+domain_policies:
+  business_pack_id: ariwalabs-training
+  mandatory_human_approval:
+    - campaign_release
+    - bootcamp_release
+    - university_agreement
+    - referral_program_change
+    - corporate_opportunity_registration
+  prohibited:
+    - fabricate_success_cases
+    - fabricate_metrics
+    - publish_without_approval
+    - contact_companies_without_approval
+  domain_boundaries:
+    - El Growth & Marketing Agent no publica contenido externo.
+    - El Growth & Marketing Agent no compra publicidad.
+    - El Growth & Marketing Agent no contacta empresas.
+    - El Growth & Marketing Agent no registra oportunidades sin aprobacion.

@@ -1,0 +1,7 @@
+skill:
+  id: framework.validate-agent-definition
+  version: 0.1.0
+  purpose: Valida campos, límites, contexto, modelos y aprobaciones de un agente.
+  model_profile: fast_structured
+  approval_required: false
+  output_schema: ../../schemas/framework-report.schema.json

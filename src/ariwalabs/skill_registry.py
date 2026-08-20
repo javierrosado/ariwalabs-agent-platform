@@ -4,16 +4,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .business_packs import BusinessPackRegistry
 from .config import load_yaml
 from .model_profiles import SUPPORTED_MODEL_PROFILES
+from .tool_gateway import ToolGateway
 
 Finding = dict[str, str]
 
-PROHIBITED_ALLOWED_TOOLS = {
-    "external-publish",
-    "external-message",
-    "payment",
-}
 SENSITIVE_SKILL_SLUGS = {
     "bootcamp-planning",
     "campaign-design",
@@ -40,18 +37,21 @@ class SkillRecord:
 
 
 class SkillRegistry:
-    def __init__(self, root: Path):
+    def __init__(self, root: Path, *, business_pack_id: str | None = None):
         self.root = root.resolve()
+        self.business_pack_id = business_pack_id
+        self.business_packs = BusinessPackRegistry(self.root)
+        self.tool_gateway = ToolGateway(self.root)
 
     def validate_repository(self) -> list[Finding]:
         findings: list[Finding] = []
         records: list[SkillRecord] = []
         seen_ids: dict[str, Path] = {}
-        agents_dir = self.root / "agents"
-        if not agents_dir.exists():
+        agent_dirs = self.business_packs.agent_dirs(self.business_pack_id)
+        if not agent_dirs:
             return findings
 
-        for agent_dir in sorted(path for path in agents_dir.iterdir() if path.is_dir()):
+        for agent_dir in agent_dirs:
             agent_config = load_yaml(agent_dir / "agent.yaml").get("agent", {})
             for skill_path in sorted(agent_dir.glob("skills/*/skill.yaml")):
                 skill_findings, record = self._load_skill(agent_dir, agent_config, skill_path)
@@ -235,26 +235,13 @@ class SkillRegistry:
                 )
             )
 
-        overlap = sorted(set(record.tools_allowed) & set(record.tools_prohibited))
-        if overlap:
-            findings.append(
-                self._finding(
-                    "error",
-                    self._format(
-                        record.path,
-                        f"tools simultaneamente permitidas y prohibidas: {overlap}",
-                    ),
-                )
+        findings.extend(
+            self.tool_gateway.validate_skill_tools(
+                skill_path=record.path,
+                allowed=record.tools_allowed,
+                prohibited=record.tools_prohibited,
             )
-
-        forbidden_allowed = sorted(set(record.tools_allowed) & PROHIBITED_ALLOWED_TOOLS)
-        if forbidden_allowed:
-            findings.append(
-                self._finding(
-                    "error",
-                    self._format(record.path, f"tools prohibidas en allowed: {forbidden_allowed}"),
-                )
-            )
+        )
 
         if record.slug in SENSITIVE_SKILL_SLUGS and not record.approval_required:
             findings.append(

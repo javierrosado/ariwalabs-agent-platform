@@ -1,0 +1,17 @@
+skill:
+  id: growth-marketing.campaign-design
+  version: 0.2.0
+  purpose: Diseña campañas de captación.
+  model_profile: reasoning
+  approval_required: true
+  tools:
+    allowed:
+      - airtable-read
+      - airtable-write-draft
+      - artifact-create
+      - audit-append
+    prohibited:
+      - external-publish
+      - external-message
+      - payment
+  output_schema: ../../schemas/campaign-design.schema.json

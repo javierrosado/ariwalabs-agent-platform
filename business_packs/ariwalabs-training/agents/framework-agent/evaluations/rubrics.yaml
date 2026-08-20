@@ -1,0 +1,94 @@
+evaluation:
+  agent_id: framework-agent
+  version: 0.1.0
+  rubrics:
+    framework.validate-agent-definition:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.5
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.3
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+    framework.register-agent:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.5
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.3
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+    framework.validate-skill-contract:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.5
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.3
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+    framework.validate-workflow:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.5
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.3
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+    framework.validate-handoff:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.5
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.3
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+    framework.release-agent:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.5
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.3
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.

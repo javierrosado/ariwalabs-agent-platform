@@ -1,0 +1,20 @@
+agent:
+  id: service-ops-agent
+  name: Example Service Operations Agent
+  version: 0.1.0
+  domain: service-operations
+  owner: company-director
+  autonomy: supervised
+  purpose: >
+    Validar solicitudes operativas simples de un servicio ficticio sin depender
+    del dominio AriwaLabs Training.
+  shared_context:
+    - framework/policies/core-agent-policy.yaml
+    - business_packs/example-service/context/service-profile.yaml
+    - business_packs/example-service/policies/example-service-policy.yaml
+  skills: []
+  workflows:
+    - validate-service-request
+  prohibited:
+    - publish_external_content
+    - modify_business_data

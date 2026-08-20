@@ -1,0 +1,213 @@
+evaluation:
+  agent_id: growth-marketing-agent
+  version: 0.1.0
+  rubrics:
+    growth-marketing.request-validation:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.audience-segmentation:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.value-proposition:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.campaign-design:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.content-planning:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.brand-compliance:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.bootcamp-planning:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.student-journey:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.referral-program:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.corporate-opportunity-detection:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.
+    growth-marketing.growth-analytics:
+      min_score: 0.8
+      criteria:
+        - id: schema_compliance
+          weight: 0.4
+          required: true
+          description: El output cumple el JSON Schema declarado por la skill.
+        - id: no_declared_errors
+          weight: 0.2
+          required: true
+          description: El output no declara errores recuperables o bloqueantes.
+        - id: approval_consistency
+          weight: 0.2
+          required: false
+          description: Si requiere aprobacion, incluye una razon explicita.
+        - id: policy_alignment
+          weight: 0.2
+          required: true
+          description: El output no declara violaciones bloqueantes de politica.

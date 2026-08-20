@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FrameworkValidationReport",
+  "type": "object",
+  "required": [
+    "status",
+    "findings"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "passed_with_warnings",
+        "blocked"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "severity",
+          "code",
+          "message",
+          "path",
+          "component",
+          "recommendation",
+          "blocking"
+        ],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "component": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "skill",
+              "workflow",
+              "schema",
+              "handoff",
+              "policy",
+              "repository"
+            ]
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "release_decision": {
+      "type": "string",
+      "enum": [
+        "ready",
+        "ready_with_observations",
+        "blocked"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

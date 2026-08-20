@@ -90,6 +90,8 @@ def test_model_gateway_audits_usage_and_cost(tmp_path: Path) -> None:
     assert "model.request.started" in event_types
     assert "model.request.completed" in event_types
     assert "model.cost.recorded" in event_types
+    completed = next(event for event in events if event["event_type"] == "model.request.completed")
+    assert completed["payload"]["duration_ms"] >= 0
     assert "should-not-leak" not in json.dumps(events)
 
 

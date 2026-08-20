@@ -111,6 +111,32 @@ def test_approval_cli_rejects_invalid_decision(tmp_path: Path) -> None:
         raise AssertionError("CLI con decision invalida debio fallar")
 
 
+def test_execution_cli_resumes_approved_execution(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    root = Path(__file__).resolve().parents[2]
+    execution = JsonRepository(root / "runtime/data").load(
+        "executions",
+        create_resume_fixture(root),
+    )
+    execution_id = execution["execution_id"]
+
+    exit_code = run_cli(
+        "ariwalabs",
+        "execution",
+        "resume",
+        execution_id,
+        "--root",
+        str(root),
+    )
+    output = json.loads(capsys.readouterr().out)
+
+    assert exit_code == 0
+    assert output["execution_id"] == execution_id
+    assert output["status"] == "completed"
+
+
 def create_pending_approval(root: Path) -> dict[str, object]:
     repo = JsonRepository(root / "runtime/data")
     repo.save("executions", "exec-test", {"execution_id": "exec-test", "approval": {}})
@@ -130,3 +156,28 @@ def run_cli(*args: str) -> int:
         return main()
     finally:
         sys.argv = original_argv
+
+
+def create_resume_fixture(root: Path) -> str:
+    from uuid import uuid4
+
+    from ariwalabs.runtime import AgentRuntime
+
+    runtime = AgentRuntime(root, execute_skills=False)
+    key = f"test-cli-resume-{uuid4().hex}"
+    result = runtime.run(
+        {
+            "agent_id": "growth-marketing-agent",
+            "workflow_id": "create-training-campaign",
+            "requested_by": "company-director",
+            "idempotency_key": key,
+            "input": {"objective": f"CLI resume {key}"},
+        }
+    )
+    ApprovalEngine(root).decide(
+        approval_id=result["approval"]["approval_id"],
+        decision="approved",
+        reason="Aprobado desde test CLI.",
+        decided_by="company-director",
+    )
+    return str(result["execution_id"])

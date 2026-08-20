@@ -1,0 +1,6 @@
+workflow:
+  id: validate-service-request
+  version: 0.1.0
+  purpose: Validar una solicitud operativa minima para un servicio ficticio.
+  steps:
+    - action: persist_report

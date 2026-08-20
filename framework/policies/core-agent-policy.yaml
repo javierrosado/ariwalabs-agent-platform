@@ -1,0 +1,23 @@
+core_policies:
+  single_operator:
+    enabled: true
+    operator_role: company-director
+  mandatory_human_approval:
+    - external_publication
+    - external_message
+    - marketing_budget
+    - use_of_customer_name
+    - production_deployment
+  prohibited:
+    - expose_secrets
+    - store_unnecessary_sensitive_data
+    - bypass_gateways
+    - call_external_apis_from_skills
+    - execute_external_action_without_approval
+  principles:
+    - version_everything
+    - validate_contracts
+    - separate_fact_assumption_inference
+    - least_privilege
+    - trace_every_execution
+    - shared_context_is_source_of_truth

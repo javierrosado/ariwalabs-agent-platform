@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "referral-program",
+  "type": "object",
+  "required": [
+    "status",
+    "summary",
+    "referral_rules",
+    "facts",
+    "assumptions",
+    "risks",
+    "missing_information",
+    "approval_required",
+    "approval_reason",
+    "errors",
+    "next_actions"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "needs_input",
+        "blocked"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "referral_rules": {
+      "type": "object",
+      "required": [
+        "program_id",
+        "eligible_stage",
+        "benefit_description",
+        "constraints",
+        "approval_checkpoint"
+      ],
+      "properties": {
+        "program_id": {
+          "type": "string"
+        },
+        "eligible_stage": {
+          "type": "string"
+        },
+        "benefit_description": {
+          "type": "string"
+        },
+        "constraints": {
+          "$ref": "#/$defs/string_list"
+        },
+        "approval_checkpoint": {
+          "type": "string",
+          "const": "referral_program_change"
+        }
+      },
+      "additionalProperties": false
+    },
+    "facts": {
+      "$ref": "#/$defs/string_list"
+    },
+    "assumptions": {
+      "$ref": "#/$defs/string_list"
+    },
+    "risks": {
+      "$ref": "#/$defs/string_list"
+    },
+    "missing_information": {
+      "$ref": "#/$defs/string_list"
+    },
+    "approval_required": {
+      "type": "boolean",
+      "const": true
+    },
+    "approval_reason": {
+      "type": "string"
+    },
+    "errors": {
+      "$ref": "#/$defs/errors"
+    },
+    "next_actions": {
+      "$ref": "#/$defs/string_list"
+    }
+  },
+  "$defs": {
+    "string_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "recoverable"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "recoverable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

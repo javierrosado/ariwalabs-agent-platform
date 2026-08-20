@@ -1,0 +1,61 @@
+business_pack:
+  id: ariwalabs-training
+  name: AriwaLabs Training Pack
+  version: 0.1.0
+  status: active
+  owner_role: company-director
+  owner: company-director
+  purpose: >
+    Declarar los activos de dominio de AriwaLabs para capacitacion,
+    crecimiento y oportunidades derivadas de comunidad sobre un core framework
+    reusable.
+  core_framework:
+    runtime: src/ariwalabs/
+    adapters: adapters/
+    validation: tests/
+  domain_assets:
+    agents:
+      - business_packs/ariwalabs-training/agents/framework-agent
+      - business_packs/ariwalabs-training/agents/growth-marketing-agent
+    context:
+      - business_packs/ariwalabs-training/context/company-profile.yaml
+      - business_packs/ariwalabs-training/context/training-catalog.yaml
+      - business_packs/ariwalabs-training/context/target-audiences.yaml
+      - business_packs/ariwalabs-training/context/channels.yaml
+    policies:
+      - framework/policies/core-agent-policy.yaml
+      - business_packs/ariwalabs-training/policies/ariwalabs-training-policy.yaml
+    handoffs:
+      - business_packs/ariwalabs-training/handoffs/growth-marketing-handoffs.yaml
+      - business_packs/ariwalabs-training/handoffs/growth-marketing-handoffs.md
+    operations:
+      airtable_tables:
+        - docs/architecture/19-airtable-tables.md
+        - adapters/airtable/schema.py
+  domain_boundaries:
+    belongs_to_core:
+      - runtime
+      - registries
+      - workflow_engine
+      - context_engine
+      - model_gateway
+      - tool_gateway
+      - approval_engine
+      - evaluation_engine
+      - artifact_manager
+      - audit
+      - persistence
+      - adapter_contracts
+    belongs_to_pack:
+      - training_catalog
+      - target_audiences
+      - growth_marketing_agent
+      - campaigns
+      - bootcamps
+      - cohorts
+      - enrollments
+      - referrals
+      - corporate_opportunity_signals
+  pending_extraction:
+    - Implementar Agent Registry multipack.
+    - Migrar progresivamente referencias documentales historicas.

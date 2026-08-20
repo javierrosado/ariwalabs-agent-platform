@@ -1,0 +1,7 @@
+skill:
+  id: framework.register-agent
+  version: 0.1.0
+  purpose: Registra una versión validada en el Agent Registry.
+  model_profile: fast_structured
+  approval_required: false
+  output_schema: ../../schemas/framework-report.schema.json

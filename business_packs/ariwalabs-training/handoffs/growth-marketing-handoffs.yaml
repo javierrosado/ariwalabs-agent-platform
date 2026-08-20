@@ -1,0 +1,246 @@
+handoffs:
+  - id: framework-to-registered-agents
+    version: 0.1.0
+    producer: framework-agent
+    consumer: registered-agent
+    trigger: onboarding_validation_or_release
+    input:
+      required:
+        - agent_definition
+        - skills
+        - workflows
+        - schemas
+        - policies
+        - tests
+    output:
+      required:
+        - validation_report
+        - approved_version
+        - applicable_restrictions
+    preconditions:
+      - repository_structure_exists
+      - validation_has_no_blocking_errors
+    approval:
+      required: true
+      approver: company-director
+      checkpoint: approve_agent_registration
+    persistence:
+      current: git_repository
+      future: AgentRegistry
+    errors:
+      - missing_schema
+      - missing_skill
+      - invalid_workflow
+      - policy_violation
+    idempotency:
+      key_strategy: agent_version_and_package_hash
+
+  - id: growth-marketing-to-director
+    version: 0.1.0
+    producer: growth-marketing-agent
+    consumer: company-director
+    trigger: campaign_bootcamp_opportunity_report_or_program_change
+    input:
+      required:
+        - request
+        - shared_context_refs
+        - operational_data_refs
+        - restrictions
+    output:
+      required:
+        - recommendation
+        - artifacts
+        - risks
+        - approval_request
+    preconditions:
+      - claims_include_sources
+      - facts_assumptions_and_inferences_are_separated
+      - risks_are_explicit
+    approval:
+      required: true
+      approver: company-director
+      checkpoint: approve_commercial_action
+    persistence:
+      current: runtime/data
+      future: Airtable
+    errors:
+      - missing_information
+      - unauthorized_data
+      - insufficient_evidence
+    idempotency:
+      key_strategy: execution_id_until_request_key_exists
+
+  - id: growth-marketing-to-content-agent
+    version: 0.1.0
+    producer: growth-marketing-agent
+    consumer: content-agent
+    trigger: approved_content_brief_or_campaign_ready_for_assets
+    input:
+      required:
+        - audience
+        - channel
+        - format
+        - message
+        - call_to_action
+        - sources
+        - restrictions
+        - date
+    output:
+      required:
+        - content_brief_id
+        - production_package
+    preconditions:
+      - campaign_approved
+      - brand_compliance_has_no_blockers
+    approval:
+      required: true
+      approver: company-director
+      checkpoint: approve_external_publication
+    persistence:
+      current: runtime/data
+      future: ContentItems_and_Artifacts
+    errors:
+      - disallowed_channel
+      - unsourced_claim
+      - missing_date_or_call_to_action
+    idempotency:
+      key_strategy: stable_content_brief_id
+
+  - id: growth-marketing-to-training-program-agent
+    version: 0.1.0
+    producer: growth-marketing-agent
+    consumer: training-program-agent
+    trigger: course_bootcamp_or_curriculum_adjustment_need
+    input:
+      required:
+        - level
+        - segment
+        - problem
+        - value_proposition
+        - duration
+        - modality
+        - expected_outcomes
+        - restrictions
+    output:
+      required:
+        - training_brief_id
+        - curriculum_requirements
+    preconditions:
+      - segment_validated
+      - objective_validated
+    approval:
+      required: true
+      approver: company-director
+      checkpoint: approve_training_offer_change
+    persistence:
+      current: runtime/data
+      future: TrainingPrograms_and_Artifacts
+    errors:
+      - inconsistent_prerequisites
+      - duration_exceeds_limit
+      - unvalidated_promise
+    idempotency:
+      key_strategy: training_brief_id_by_version
+
+  - id: growth-marketing-to-student-success-agent
+    version: 0.1.0
+    producer: growth-marketing-agent
+    consumer: student-success-agent
+    trigger: student_enrolled_status_change_or_community_action
+    input:
+      required:
+        - person_id
+        - enrollment_id
+        - cohort_id
+        - status
+        - expectations
+        - authorized_contact_data
+    output:
+      required:
+        - accompaniment_plan
+        - journey_event
+    preconditions:
+      - personal_data_consent_exists
+      - enrollment_registered
+    approval:
+      required: true
+      approver: company-director
+      checkpoint: approve_external_message_if_needed
+    persistence:
+      current: runtime/data
+      future: People_Enrollments_Cohorts_and_AgentExecutions
+    errors:
+      - missing_consent
+      - incomplete_data
+      - missing_cohort
+    idempotency:
+      key_strategy: person_id_enrollment_id_and_event
+
+  - id: growth-marketing-to-corporate-opportunity-agent
+    version: 0.1.0
+    producer: growth-marketing-agent
+    consumer: corporate-opportunity-agent
+    trigger: approved_corporate_signal_with_evidence
+    input:
+      required:
+        - student
+        - organization
+        - signals
+        - evidence
+        - hypothesis
+        - confidence
+        - contact_restrictions
+    output:
+      required:
+        - opportunity_signal_id
+        - draft_opportunity
+    preconditions:
+      - organization_provided_voluntarily
+      - no_external_contact
+      - director_approval_exists
+    approval:
+      required: true
+      approver: company-director
+      checkpoint: approve_opportunity_registration
+    persistence:
+      current: runtime/data
+      future: Opportunities_Organizations_and_Approvals
+    errors:
+      - insufficient_evidence
+      - unauthorized_data
+      - privacy_conflict
+    idempotency:
+      key_strategy: opportunity_signal_id_from_source_and_date
+
+  - id: corporate-opportunity-to-sales-proposal-agent
+    version: 0.1.0
+    producer: corporate-opportunity-agent
+    consumer: sales-proposal-agent
+    trigger: approved_corporate_opportunity_for_proposal
+    input:
+      required:
+        - approved_opportunity
+        - problem
+        - hypothetical_scope
+        - restrictions
+        - authorized_stakeholders
+        - director_decision
+    output:
+      required:
+        - sales_proposal_brief
+    preconditions:
+      - explicit_director_approval
+      - authorized_data_only
+    approval:
+      required: true
+      approver: company-director
+      checkpoint: approve_contact_or_proposal_delivery
+    persistence:
+      current: runtime/data
+      future: Opportunities_Approvals_and_Artifacts
+    errors:
+      - missing_approval
+      - sensitive_data
+      - unvalidated_scope
+    idempotency:
+      key_strategy: opportunity_id_and_brief_version

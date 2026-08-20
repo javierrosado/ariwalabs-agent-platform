@@ -34,6 +34,20 @@ def test_skill_registry_blocks_forbidden_allowed_tool(tmp_path: Path) -> None:
     assert any("tools prohibidas en allowed" in finding["message"] for finding in findings)
 
 
+def test_skill_registry_blocks_unknown_tool(tmp_path: Path) -> None:
+    write_skill_fixture(
+        tmp_path,
+        allowed_tools=["unknown-tool"],
+    )
+
+    findings = SkillRegistry(tmp_path).validate_repository()
+
+    assert any(
+        "tools allowed desconocidas: ['unknown-tool']" in finding["message"]
+        for finding in findings
+    )
+
+
 def test_skill_registry_blocks_sensitive_skill_without_approval(tmp_path: Path) -> None:
     write_skill_fixture(
         tmp_path,

@@ -1,0 +1,27 @@
+company:
+  id: ariwalabs
+  name: AriwaLabs
+  country: Peru
+  business_lines:
+    - training
+    - ai_consulting
+  initial_priority: training
+  strategy: >
+    Captar estudiantes universitarios, recien egresados y profesionales de
+    ingenieria de sistemas o carreras afines mediante capacitaciones en IA.
+    Utilizar la relacion con los alumnos para identificar oportunidades de
+    consultoria en las empresas donde trabajan.
+  director:
+    role: company-director
+    execution_owner: Javier Rosado
+    human_approval_required: true
+  strategic_flywheel:
+    - prospect
+    - student
+    - certified_student
+    - community_member
+    - ambassador
+    - corporate_signal
+    - consulting_opportunity
+    - consulting_project
+    - reusable_case

@@ -1,0 +1,88 @@
+{
+  "saved_at": "2026-08-15T17:54:03.968154+00:00",
+  "payload": {
+    "handoff_execution_id": "hnd-390346719cfc",
+    "handoff_id": "growth-marketing-to-director",
+    "handoff_version": "0.1.0",
+    "business_pack_id": "ariwalabs-training",
+    "producer": "growth-marketing-agent",
+    "consumer": "company-director",
+    "trigger": "campaign_bootcamp_opportunity_report_or_program_change",
+    "status": "created",
+    "created_at": "2026-08-15T17:54:03.968154+00:00",
+    "approval": {
+      "required": true,
+      "approver": "company-director",
+      "checkpoint": "approve_commercial_action",
+      "approved": true,
+      "approval_id": "appr-cli"
+    },
+    "input": {
+      "request": {
+        "objective": "Campaign"
+      },
+      "shared_context_refs": [
+        "company-profile"
+      ],
+      "operational_data_refs": [],
+      "restrictions": [
+        "human_approval_required"
+      ]
+    },
+    "output": {
+      "recommendation": {
+        "summary": "Proceed as draft."
+      },
+      "artifacts": [],
+      "risks": [
+        "needs review"
+      ],
+      "approval_request": {
+        "checkpoint": "approve_commercial_action"
+      }
+    },
+    "contract": {
+      "handoff_id": "growth-marketing-to-director",
+      "version": "0.1.0",
+      "producer": "growth-marketing-agent",
+      "consumer": "company-director",
+      "trigger": "campaign_bootcamp_opportunity_report_or_program_change",
+      "input_required": [
+        "request",
+        "shared_context_refs",
+        "operational_data_refs",
+        "restrictions"
+      ],
+      "output_required": [
+        "recommendation",
+        "artifacts",
+        "risks",
+        "approval_request"
+      ],
+      "preconditions": [
+        "claims_include_sources",
+        "facts_assumptions_and_inferences_are_separated",
+        "risks_are_explicit"
+      ],
+      "approval_required": true,
+      "approval_approver": "company-director",
+      "approval_checkpoint": "approve_commercial_action",
+      "persistence_current": "runtime/data",
+      "persistence_future": "Airtable",
+      "errors": [
+        "missing_information",
+        "unauthorized_data",
+        "insufficient_evidence"
+      ],
+      "idempotency_key_strategy": "execution_id_until_request_key_exists",
+      "path": "business_packs\\ariwalabs-training\\handoffs\\growth-marketing-handoffs.yaml"
+    },
+    "idempotency": {
+      "key": "handoff-cli-test",
+      "storage_id": "3080aa70dcef2cde0cf4f148816669574d744eb4cfa3feaed7181d2b1532691c",
+      "strategy": "execution_id_until_request_key_exists",
+      "replayed": false
+    },
+    "duration_ms": 12
+  }
+}

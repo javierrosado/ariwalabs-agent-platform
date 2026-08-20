@@ -1,0 +1,17 @@
+skill:
+  id: growth-marketing.request-validation
+  version: 0.2.0
+  purpose: Valida solicitudes y detecta información faltante.
+  model_profile: fast_structured
+  approval_required: false
+  tools:
+    allowed:
+      - airtable-read
+      - airtable-write-draft
+      - artifact-create
+      - audit-append
+    prohibited:
+      - external-publish
+      - external-message
+      - payment
+  output_schema: ../../schemas/request-validation.schema.json

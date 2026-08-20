@@ -289,6 +289,10 @@ def test_airtable_audit_log_does_not_store_authorization_token(tmp_path: Path) -
     adapter.list_records("Artifacts")
 
     body = (tmp_path / "runtime/data/audit.jsonl").read_text(encoding="utf-8")
-    event = json.loads(body)
+    events = [json.loads(line) for line in body.splitlines()]
+    request_event = next(
+        event for event in events if event["event_type"] == "airtable.request.completed"
+    )
     assert "secret-token" not in body
-    assert event["event_type"] == "airtable.record.read"
+    assert request_event["payload"]["duration_ms"] >= 0
+    assert "airtable.record.read" in [event["event_type"] for event in events]

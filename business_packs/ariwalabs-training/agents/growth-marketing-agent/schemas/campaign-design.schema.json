@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "campaign-design",
+  "type": "object",
+  "required": [
+    "status",
+    "summary",
+    "campaign",
+    "facts",
+    "assumptions",
+    "risks",
+    "missing_information",
+    "approval_required",
+    "approval_reason",
+    "errors",
+    "next_actions"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "needs_input",
+        "blocked"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "campaign": {
+      "type": "object",
+      "required": [
+        "campaign_id",
+        "objective",
+        "audience_ids",
+        "training_level_ids",
+        "channel_ids",
+        "messages",
+        "call_to_action",
+        "approval_checkpoint"
+      ],
+      "properties": {
+        "campaign_id": {
+          "type": "string"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "audience_ids": {
+          "$ref": "#/$defs/string_list"
+        },
+        "training_level_ids": {
+          "$ref": "#/$defs/string_list"
+        },
+        "channel_ids": {
+          "$ref": "#/$defs/string_list"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "angle",
+              "message",
+              "source_type"
+            ],
+            "properties": {
+              "angle": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "source_type": {
+                "type": "string",
+                "enum": [
+                  "fact",
+                  "assumption",
+                  "inference"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "call_to_action": {
+          "type": "string"
+        },
+        "approval_checkpoint": {
+          "type": "string",
+          "const": "approve_campaign"
+        }
+      },
+      "additionalProperties": false
+    },
+    "facts": {
+      "$ref": "#/$defs/string_list"
+    },
+    "assumptions": {
+      "$ref": "#/$defs/string_list"
+    },
+    "risks": {
+      "$ref": "#/$defs/string_list"
+    },
+    "missing_information": {
+      "$ref": "#/$defs/string_list"
+    },
+    "approval_required": {
+      "type": "boolean",
+      "const": true
+    },
+    "approval_reason": {
+      "type": "string"
+    },
+    "errors": {
+      "$ref": "#/$defs/errors"
+    },
+    "next_actions": {
+      "$ref": "#/$defs/string_list"
+    }
+  },
+  "$defs": {
+    "string_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "recoverable"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "recoverable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

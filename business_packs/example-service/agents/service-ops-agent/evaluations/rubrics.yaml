@@ -1,0 +1,4 @@
+evaluation:
+  agent_id: service-ops-agent
+  version: 0.1.0
+  rubrics: {}

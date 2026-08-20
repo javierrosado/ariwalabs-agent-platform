@@ -1,0 +1,26 @@
+target_audiences:
+  priority_order:
+    - university_students
+    - recent_graduates
+    - experienced_professionals
+  academic_background:
+    - systems_engineering
+    - software_engineering
+    - computer_science
+    - related_careers
+  personas:
+    university_students:
+      needs:
+        - employability
+        - practical_fundamentals
+        - portfolio
+    recent_graduates:
+      needs:
+        - specialization
+        - applied_experience
+        - professional_differentiation
+    experienced_professionals:
+      needs:
+        - apply_ai_at_work
+        - accelerate_sdlc
+        - career_growth

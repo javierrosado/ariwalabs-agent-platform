@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "bootcamp-planning",
+  "type": "object",
+  "required": [
+    "status",
+    "summary",
+    "bootcamp",
+    "facts",
+    "assumptions",
+    "risks",
+    "missing_information",
+    "approval_required",
+    "approval_reason",
+    "errors",
+    "next_actions"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "needs_input",
+        "blocked"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "bootcamp": {
+      "type": "object",
+      "required": [
+        "bootcamp_id",
+        "objective",
+        "audience_ids",
+        "training_level_ids",
+        "demo_domain",
+        "agenda",
+        "approval_checkpoint"
+      ],
+      "properties": {
+        "bootcamp_id": {
+          "type": "string"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "audience_ids": {
+          "$ref": "#/$defs/string_list"
+        },
+        "training_level_ids": {
+          "$ref": "#/$defs/string_list"
+        },
+        "demo_domain": {
+          "type": "string",
+          "enum": [
+            "telco",
+            "banking",
+            "retail",
+            "other"
+          ]
+        },
+        "agenda": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "title",
+              "duration_minutes",
+              "outcome"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "duration_minutes": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "outcome": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "approval_checkpoint": {
+          "type": "string",
+          "const": "approve_bootcamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "facts": {
+      "$ref": "#/$defs/string_list"
+    },
+    "assumptions": {
+      "$ref": "#/$defs/string_list"
+    },
+    "risks": {
+      "$ref": "#/$defs/string_list"
+    },
+    "missing_information": {
+      "$ref": "#/$defs/string_list"
+    },
+    "approval_required": {
+      "type": "boolean",
+      "const": true
+    },
+    "approval_reason": {
+      "type": "string"
+    },
+    "errors": {
+      "$ref": "#/$defs/errors"
+    },
+    "next_actions": {
+      "$ref": "#/$defs/string_list"
+    }
+  },
+  "$defs": {
+    "string_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "recoverable"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "recoverable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

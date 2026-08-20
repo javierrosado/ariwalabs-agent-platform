@@ -1,0 +1,6 @@
+service_profile:
+  name: Example Service
+  description: Servicio ficticio para validar reusabilidad multi-negocio.
+  primary_audience:
+    - clientes internos
+    - usuarios de prueba

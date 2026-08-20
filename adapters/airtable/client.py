@@ -282,6 +282,7 @@ class AirtableHttpAdapter:
         audit_table: str,
         body: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
+        started_at = time.perf_counter()
         headers = {
             "Authorization": f"Bearer {self.config.token}",
             "Content-Type": "application/json",
@@ -302,7 +303,11 @@ class AirtableHttpAdapter:
                         "airtable.error",
                         error_type="AirtableRateLimitError",
                         message="rate limit agotado",
-                        metadata={"table": audit_table, "method": method},
+                        metadata={
+                            "table": audit_table,
+                            "method": method,
+                            "duration_ms": self._duration_ms(started_at),
+                        },
                     )
                     msg = "rate limit agotado"
                     raise AirtableRateLimitError(msg)
@@ -314,9 +319,23 @@ class AirtableHttpAdapter:
                     "airtable.error",
                     error_type="AirtableRemoteError",
                     message=message,
-                    metadata={"table": audit_table, "method": method, "status": status},
+                    metadata={
+                        "table": audit_table,
+                        "method": method,
+                        "status": status,
+                        "duration_ms": self._duration_ms(started_at),
+                    },
                 )
                 raise AirtableRemoteError(message)
+            self.audit.append(
+                "airtable.request.completed",
+                {
+                    "table": audit_table,
+                    "method": method,
+                    "status": status,
+                    "duration_ms": self._duration_ms(started_at),
+                },
+            )
             return payload
         msg = self._error_message(last_payload)
         raise AirtableRateLimitError(msg)
@@ -353,6 +372,9 @@ class AirtableHttpAdapter:
             if isinstance(message, str):
                 return message
         return "error remoto Airtable"
+
+    def _duration_ms(self, started_at: float) -> int:
+        return max(0, round((time.perf_counter() - started_at) * 1000))
 
 
 def _normalize_base_id(raw_base_id: str) -> str:

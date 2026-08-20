@@ -20,8 +20,9 @@ la comunidad formada por esas capacitaciones.
 - Ninguna skill llama directamente a Airtable, OpenAI, WhatsApp, LinkedIn u otra
   API externa.
 - Toda integracion pasa por `adapters/` o por el futuro Tool Gateway.
-- El contexto empresarial vive en `shared/context/`; no duplicarlo dentro de
-  agentes, prompts, skills o workflows.
+- El contexto empresarial default vive en `shared/context/`; el contexto de
+  cada business pack vive en `business_packs/<pack>/context/`. No duplicarlo
+  dentro de prompts, skills o workflows.
 - El Framework Agent gobierna agentes; no ejecuta tareas comerciales.
 - El Growth & Marketing Agent no publica, no envia mensajes externos, no compra
   publicidad, no contacta empresas y no registra oportunidades sin aprobacion.
@@ -39,9 +40,12 @@ la comunidad formada por esas capacitaciones.
 ## Que leer segun la tarea
 
 - Contexto de negocio: `docs/project-context.md`, `shared/context/*.yaml`.
-- Politicas: `shared/policies/global-agent-policy.yaml`.
+- Politicas: `framework/policies/core-agent-policy.yaml`,
+  `business_packs/*/policies/*.yaml` y compatibilidad historica en
+  `shared/policies/global-agent-policy.yaml`.
 - Estado real y deuda: `docs/current-state.md`, `docs/implementation-backlog.md`.
-- Arquitectura: `docs/architecture/framework-overview.md` y ADRs.
+- Arquitectura: `docs/architecture/01-framework-overview.md` y ADRs.
+- Business packs: `business_packs/*/pack.yaml` y docs del pack.
 - Agentes: `docs/agent-catalog.md`, `agents/*/agent.yaml`.
 - Skills: `agents/<agent>/skills/*/skill.yaml` y schemas del agente.
 - Workflows: `agents/<agent>/workflows/*.yaml`.
@@ -55,11 +59,15 @@ la comunidad formada por esas capacitaciones.
 
 - `src/ariwalabs/`: CLI, runtime, validador, auditoria y persistencia local.
 - `agents/`: definiciones, prompts, skills, schemas y workflows de agentes.
-- `shared/context/`: fuente de verdad empresarial compartida.
-- `shared/policies/`: reglas globales.
+- `shared/context/`: fuente de verdad empresarial compartida del modo default.
+- `shared/policies/`: reglas globales historicas del modo default.
+- `framework/policies/`: politicas core reutilizables.
+- `business_packs/*/context/`: contexto de dominio por pack.
+- `business_packs/*/policies/`: politicas de dominio por pack.
 - `shared/schemas/`: contratos comunes futuros.
 - `shared/templates/`: plantillas comunes futuras.
 - `adapters/`: contratos de integraciones externas.
+- `business_packs/`: manifests y documentacion de dominios reutilizables.
 - `docs/`: contexto persistente, arquitectura, decisiones, estado y backlog.
 - `examples/`: requests de ejemplo.
 - `tests/`: pruebas unitarias e integracion.

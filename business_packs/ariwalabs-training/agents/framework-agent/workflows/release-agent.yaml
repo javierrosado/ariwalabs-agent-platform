@@ -1,0 +1,8 @@
+workflow:
+  id: release-agent
+  steps:
+    - workflow: validate-repository
+    - action: run_tests
+    - skill: framework.release-agent
+    - approval: company-director
+      checkpoint: approve_release

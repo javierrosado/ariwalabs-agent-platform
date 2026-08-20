@@ -160,12 +160,12 @@ Este archivo es append-only. No borrar entradas anteriores.
 - Objetivo: agregar un diagrama de arquitectura para entender como se relacionan
   los componentes principales del framework, agentes, contexto, adapters,
   persistencia y GitHub.
-- Archivos modificados: `docs/architecture/framework-overview.md`, `README.md`
+- Archivos modificados: `docs/architecture/01-framework-overview.md`, `README.md`
   y `docs/session-log.md`.
 - Decisiones: ubicar el diagrama completo en la documentacion de arquitectura y
   dejar en `README.md` una referencia breve para no sobrecargar la vista inicial.
 - Pruebas ejecutadas: revision de diff con `git diff -- README.md
-  docs/architecture/framework-overview.md docs/session-log.md`;
+  docs/architecture/01-framework-overview.md docs/session-log.md`;
   `python3 -m compileall src tests adapters`; se intentaron `ariwalabs framework
   validate-repository --root .`, `ruff check .`, `mypy src` y `pytest`.
 - Resultados: `compileall` paso; diagrama Mermaid agregado y referencia en
@@ -224,7 +224,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   `src/ariwalabs/framework_validator.py`,
   `tests/unit/test_framework_validator.py`, `docs/current-state.md`,
   `docs/session-log.md` y
-  `docs/implements/2026-07-24-completar-schemas-skills.md`.
+  `docs/implements/completar-schemas-skills.md`.
 - Decisiones: mantener contexto institucional en `shared/context/`; usar
   schemas estrictos con `required`, `properties`, tipos, errores y
   `additionalProperties: false`; conservar aprobaciones humanas para campanas,
@@ -249,7 +249,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   `src/ariwalabs/framework_validator.py`, `tests/unit/test_skill_registry.py`,
   `docs/current-state.md`, `docs/implementation-backlog.md`,
   `docs/session-log.md` y
-  `docs/implements/2026-07-24-implementar-skill-registry.md`.
+  `docs/implements/implementar-skill-registry.md`.
 - Decisiones: extraer validacion de skills y output schemas desde
   `FrameworkValidator` hacia `SkillRegistry`; mantener `tools` opcional para
   skills del Framework Agent; bloquear tools externas sensibles en `allowed`;
@@ -276,7 +276,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   `src/ariwalabs/framework_validator.py`,
   `tests/unit/test_handoff_registry.py`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-07-24-completar-validacion-handoffs.md`.
+  `docs/implements/completar-validacion-handoffs.md`.
 - Decisiones: mantener Markdown como documentacion humana y agregar YAML como
   fuente validable; permitir consumidores futuros documentados; bloquear SQLite;
   exigir aprobacion de `company-director` en handoffs sensibles.
@@ -300,7 +300,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   `src/ariwalabs/runtime.py`, `tests/unit/test_workflow_engine.py`,
   `tests/integration/test_growth_runtime.py`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-07-25-completar-workflow-engine.md`.
+  `docs/implements/completar-workflow-engine.md`.
 - Decisiones: interpretar workflows de forma local y deterministica; simular
   skills y acciones internas; pausar en approvals de `company-director`; no
   llamar modelos, Airtable, WhatsApp, LinkedIn ni otros proveedores externos.
@@ -324,7 +324,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   `tests/unit/test_approval_engine.py`,
   `tests/integration/test_growth_runtime.py`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-07-25-implementar-approval-engine.md`.
+  `docs/implements/implementar-approval-engine.md`.
 - Decisiones: persistir approvals en JSON local; exigir `company-director`
   como aprobador y decisor; exigir razon para aprobar/rechazar; no reanudar
   workflows ni ejecutar acciones externas automaticamente tras aprobar.
@@ -347,7 +347,7 @@ Este archivo es append-only. No borrar entradas anteriores.
 - Archivos modificados: `src/ariwalabs/cli.py`,
   `tests/unit/test_approval_cli.py`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-07-25-implementar-cli-aprobaciones.md`.
+  `docs/implements/implementar-cli-aprobaciones.md`.
 - Decisiones: agregar `ariwalabs approval list` y `ariwalabs approval decide`;
   fijar `decided_by` como `company-director`; exigir `--reason`; no reanudar
   workflows ni ejecutar acciones externas al aprobar.
@@ -369,7 +369,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   `src/ariwalabs/runtime.py`, `tests/unit/test_artifact_manager.py`,
   `tests/integration/test_growth_runtime.py`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-07-25-implementar-artifact-manager.md`.
+  `docs/implements/implementar-artifact-manager.md`.
 - Decisiones: registrar solo metadata JSON local; crear artifacts solo para
   acciones internas efectivamente alcanzadas; no crear artifacts posteriores a
   approvals pendientes; no usar almacenamiento externo ni Airtable.
@@ -394,7 +394,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   `src/ariwalabs/artifact_manager.py`, `src/ariwalabs/framework_validator.py`,
   `tests/unit/test_audit.py`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-07-25-implementar-audit-log-completo.md`.
+  `docs/implements/implementar-audit-log-completo.md`.
 - Decisiones: mantener JSONL local; conservar compatibilidad de
   `AuditLogger.append`; agregar contrato canonico con `event_id`, severidad,
   actor, correlacion y payload sanitizado; preparar evento de costos sin
@@ -421,9 +421,9 @@ Este archivo es append-only. No borrar entradas anteriores.
   `adapters/airtable/client.py`, `adapters/airtable/errors.py`,
   `adapters/airtable/schema.py`, `adapters/airtable/README.md`,
   `tests/unit/test_airtable_adapter.py`,
-  `docs/architecture/airtable-adapter-contract.md`, `docs/current-state.md`,
+  `docs/architecture/18-airtable-adapter-contract.md`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-07-25-implementar-airtable-adapter.md`.
+  `docs/implements/implementar-airtable-adapter.md`.
 - Decisiones: usar `urllib` de la libreria estandar; mantener transporte
   inyectable para tests sin red; leer secretos desde `.env` o variables de
   entorno; bloquear tablas no declaradas; auditar operaciones sin token; no
@@ -450,8 +450,8 @@ Este archivo es append-only. No borrar entradas anteriores.
   de conexion de un archivo de entorno explicito.
 - Archivos modificados: `adapters/airtable/base.py`,
   `adapters/airtable/client.py`, `adapters/airtable/README.md`,
-  `docs/architecture/airtable-adapter-contract.md`, `docs/current-state.md`,
-  `docs/implements/2026-07-25-implementar-airtable-adapter.md`,
+  `docs/architecture/18-airtable-adapter-contract.md`, `docs/current-state.md`,
+  `docs/implements/implementar-airtable-adapter.md`,
   `pyproject.toml`, `src/ariwalabs/cli.py`,
   `tests/unit/test_airtable_adapter.py` y `docs/session-log.md`.
 - Decisiones: agregar `validate_access()` no destructivo; permitir metadata de
@@ -494,12 +494,12 @@ Este archivo es append-only. No borrar entradas anteriores.
 ## 2026-07-26 - Disenar tablas de Airtable
 
 - Objetivo: implementar el item P1 "Disenar tablas de Airtable" del backlog.
-- Archivos modificados: `docs/architecture/airtable-tables.md`,
-  `docs/architecture/airtable-adapter-contract.md`,
+- Archivos modificados: `docs/architecture/19-airtable-tables.md`,
+  `docs/architecture/18-airtable-adapter-contract.md`,
   `adapters/airtable/schema.py`, `tests/unit/test_airtable_schema.py`,
   `tests/unit/test_airtable_adapter.py`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-07-26-disenar-tablas-airtable.md`.
+  `docs/implements/disenar-tablas-airtable.md`.
 - Decisiones: documentar primero el contrato operacional; alinear el catalogo
   ejecutable del adapter; mantener JSON local como persistencia transitoria; no
   crear tablas reales desde codigo; conservar aprobacion humana obligatoria.
@@ -518,7 +518,7 @@ Este archivo es append-only. No borrar entradas anteriores.
 - Archivos modificados: `scripts/create_airtable_tables.py`,
   `adapters/airtable/README.md`, `docs/current-state.md`,
   `docs/session-log.md` y
-  `docs/implements/2026-07-26-crear-tablas-airtable.md`.
+  `docs/implements/crear-tablas-airtable.md`.
 - Decisiones: usar Metadata API; crear solo tablas/campos faltantes; no
   insertar registros; no imprimir token; mantener skills desacopladas de
   Airtable.
@@ -539,9 +539,9 @@ Este archivo es append-only. No borrar entradas anteriores.
   `src/ariwalabs/skill_registry.py`, `adapters/models/base.py`,
   `adapters/models/errors.py`, `adapters/models/fake.py`,
   `tests/unit/test_model_gateway.py`, `tests/unit/test_skill_registry.py`,
-  `docs/architecture/model-gateway.md`, `docs/current-state.md`,
+  `docs/architecture/15-model-gateway.md`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-07-26-implementar-model-gateway.md`.
+  `docs/implements/implementar-model-gateway.md`.
 - Decisiones: soportar perfiles logicos `reasoning`, `generation`,
   `evaluation` y `fast_structured`; usar adapter falso sin red; auditar requests
   y costos opcionales sin registrar prompts completos ni payloads sensibles; no
@@ -593,7 +593,7 @@ Este archivo es append-only. No borrar entradas anteriores.
 - Archivos modificados: `.env.example`, `pyproject.toml`,
   `adapters/models/__init__.py`, `adapters/models/openai.py`,
   `tests/unit/test_openai_model_adapter.py`,
-  `docs/architecture/model-gateway.md`, `docs/current-state.md`,
+  `docs/architecture/15-model-gateway.md`, `docs/current-state.md`,
   `docs/implementation-backlog.md` y `docs/session-log.md`.
 - Decisiones: usar Responses API con Structured Outputs y JSON Schema estricto
   segun la documentacion oficial de OpenAI; resolver modelos por perfiles
@@ -614,7 +614,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   o cambiar de proveedor de modelos sin tocar skills.
 - Archivos modificados: `.env.example`, `adapters/models/factory.py`,
   `tests/unit/test_model_adapter_factory.py`,
-  `docs/architecture/model-gateway.md`, `docs/current-state.md` y
+  `docs/architecture/15-model-gateway.md`, `docs/current-state.md` y
   `docs/session-log.md`.
 - Decisiones: agregar `MODEL_PROVIDER` como punto central de seleccion; mantener
   `fake` como provider local por defecto; exigir que nuevos proveedores
@@ -635,7 +635,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   `src/ariwalabs/workflow_engine.py`, `src/ariwalabs/runtime.py`,
   `tests/unit/test_model_gateway.py`, `tests/unit/test_workflow_engine.py`,
   `tests/integration/test_growth_runtime.py`,
-  `docs/architecture/model-gateway.md`, `docs/current-state.md`,
+  `docs/architecture/15-model-gateway.md`, `docs/current-state.md`,
   `docs/implementation-backlog.md` y `docs/session-log.md`.
 - Decisiones: agregar `generate_structured()` sin romper `generate()`; mapear
   `invalid_output`, `provider_failed`, `incomplete` y `refused` como estados
@@ -689,12 +689,12 @@ Este archivo es append-only. No borrar entradas anteriores.
 
 - Objetivo: crear archivos `docs/implements/*.md` para los bloques ejecutados
   durante esta sesion.
-- Archivos modificados: `docs/implements/2026-08-08-cerrar-formalmente-p0.md`,
-  `docs/implements/2026-08-08-integrar-modelos-openai.md`,
-  `docs/implements/2026-08-08-centralizar-cambio-proveedor-modelo.md`,
-  `docs/implements/2026-08-08-structured-outputs-recuperables.md`,
-  `docs/implements/2026-08-08-pruebas-regresion-growth.md`,
-  `docs/implements/2026-08-08-cerrar-formalmente-p1.md` y
+- Archivos modificados: `docs/implements/cerrar-formalmente-p0.md`,
+  `docs/implements/integrar-modelos-openai.md`,
+  `docs/implements/centralizar-cambio-proveedor-modelo.md`,
+  `docs/implements/structured-outputs-recuperables.md`,
+  `docs/implements/pruebas-regresion-growth.md`,
+  `docs/implements/cerrar-formalmente-p1.md` y
   `docs/session-log.md`.
 - Decisiones: usar el formato solicitado con objetivo, alcance, archivos,
   pasos, validaciones, bloqueos de entorno, riesgos y siguiente paso.
@@ -712,7 +712,7 @@ Este archivo es append-only. No borrar entradas anteriores.
   `tests/unit/test_idempotency.py`, `tests/integration/test_growth_runtime.py`,
   `docs/current-state.md`, `docs/implementation-backlog.md`,
   `docs/session-log.md` y
-  `docs/implements/2026-08-10-control-idempotencia.md`.
+  `docs/implements/control-idempotencia.md`.
 - Decisiones: aceptar `idempotency_key` explicita o derivar una llave automatica
   desde una huella canonica del request; guardar indice local JSON transitorio;
   devolver la ejecucion existente como replay sin crear nuevos approvals ni
@@ -735,9 +735,9 @@ Este archivo es append-only. No borrar entradas anteriores.
   `adapters/models/openai.py`, `adapters/models/factory.py`,
   `tests/unit/test_model_costs.py`, `tests/unit/test_model_gateway.py`,
   `tests/unit/test_openai_model_adapter.py`,
-  `docs/architecture/model-gateway.md`, `docs/current-state.md`,
+  `docs/architecture/15-model-gateway.md`, `docs/current-state.md`,
   `docs/implementation-backlog.md`, `docs/session-log.md` y
-  `docs/implements/2026-08-10-metricas-costos-tokens.md`.
+  `docs/implements/metricas-costos-tokens.md`.
 - Decisiones: no hardcodear precios; leer tarifas opcionales desde `.env`;
   auditar tokens aunque no haya tarifa configurada; incluir `skill_id` opcional
   en eventos de costo; mantener estimaciones como configuradas, no facturacion
@@ -750,3 +750,425 @@ Este archivo es append-only. No borrar entradas anteriores.
   `src` y pytest con 97 tests.
 - Siguiente paso: continuar con evaluacion independiente, Tool Gateway o
   Context Engine.
+
+## 2026-08-10 - Tool Gateway
+
+- Objetivo: implementar el item P2 "Tool Gateway" para resolver centralmente
+  tools permitidas/prohibidas declaradas por skills.
+- Archivos modificados: `src/ariwalabs/tool_gateway.py`,
+  `src/ariwalabs/skill_registry.py`, `tests/unit/test_tool_gateway.py`,
+  `tests/unit/test_skill_registry.py`,
+  `docs/architecture/01-framework-overview.md`, `docs/current-state.md`,
+  `docs/implementation-backlog.md`, `docs/session-log.md` y
+  `docs/implements/tool-gateway.md`.
+- Decisiones: crear un catalogo central estatico para tools actuales; conservar
+  los mensajes historicos de validacion; bloquear acciones externas como
+  `external-publish`, `external-message` y `payment` cuando aparezcan en
+  `tools.allowed`; validar tools desconocidas.
+- Pruebas ejecutadas: pytest focalizado para Tool Gateway, Skill Registry y
+  Framework Validator; Ruff sobre archivos tocados; suite completa del
+  protocolo.
+- Resultados: set focalizado paso con 14 tests; la suite completa paso con
+  validacion del framework `status=passed`, Ruff limpio, mypy limpio sobre
+  `src` y pytest con 103 tests.
+- Siguiente paso: continuar con evaluacion independiente o Context Engine.
+
+## 2026-08-10 - Context Engine
+
+- Objetivo: implementar el item P2 "Context Engine" para componer contexto
+  compartido por agente/workflow sin duplicarlo en agentes, prompts, skills o
+  workflows.
+- Archivos modificados: `src/ariwalabs/context_engine.py`,
+  `src/ariwalabs/framework_validator.py`, `src/ariwalabs/runtime.py`,
+  `tests/unit/test_context_engine.py`, `tests/unit/test_framework_validator.py`,
+  `tests/integration/test_growth_runtime.py`,
+  `docs/architecture/01-framework-overview.md`, `docs/current-state.md`,
+  `docs/implementation-backlog.md`, `docs/session-log.md` y
+  `docs/implements/context-engine.md`.
+- Decisiones: permitir fuentes solo bajo `shared/context/` y
+  `shared/policies/`; componer todo el contexto declarado por agente para el
+  workflow; mantener `shared_context` como lista de rutas y agregar
+  `composed_context` serializable a ejecuciones nuevas.
+- Pruebas ejecutadas: pytest focalizado para Context Engine, Framework
+  Validator y Growth runtime; Ruff sobre archivos tocados; `mypy src`; suite
+  completa del protocolo.
+- Resultados: set focalizado paso con 15 tests; la suite completa paso con
+  validacion del framework `status=passed`, Ruff limpio, mypy limpio sobre
+  `src` y pytest con 109 tests.
+- Siguiente paso: continuar con evaluacion independiente.
+
+## 2026-08-10 - Evaluacion independiente
+
+- Objetivo: implementar el ultimo pendiente de P2 con rubricas por skill y un
+  evaluador separado de la generacion.
+- Archivos modificados:
+  `agents/framework-agent/evaluations/rubrics.yaml`,
+  `agents/growth-marketing-agent/evaluations/rubrics.yaml`,
+  `src/ariwalabs/evaluation_engine.py`,
+  `src/ariwalabs/framework_validator.py`, `src/ariwalabs/runtime.py`,
+  `tests/unit/test_evaluation_engine.py`,
+  `tests/integration/test_growth_runtime.py`,
+  `docs/architecture/01-framework-overview.md`, `docs/current-state.md`,
+  `docs/implementation-backlog.md`, `docs/session-log.md` y
+  `docs/implements/evaluacion-independiente.md`.
+- Decisiones: definir rubricas en `evaluations/rubrics.yaml` por agente;
+  validar cobertura por `skill_id`; evaluar deterministamente schema, errores,
+  aprobacion y politicas; dejar disponible una llamada opcional a Model Gateway
+  con perfil `evaluation`; persistir `evaluation` separado del workflow.
+- Pruebas ejecutadas: pytest focalizado para Evaluation Engine, Framework
+  Validator y Growth runtime; Ruff sobre archivos tocados; `mypy src`; suite
+  completa del protocolo.
+- Resultados: set focalizado paso con 17 tests; la suite completa paso con
+  validacion del framework `status=passed`, Ruff limpio, mypy limpio sobre
+  `src` y pytest con 115 tests.
+- Siguiente paso: P2 queda cerrado; definir el siguiente incremento posterior a
+  P2.
+
+## 2026-08-15 - Evaluacion de alineacion arquitectonica
+
+- Objetivo: evaluar si `docs/architecture/01-framework-overview.md` esta alineado
+  con la implementacion actual y documentar cada componente de arquitectura con
+  fichas `.md` similares a `model-gateway.md`.
+- Archivos modificados: `docs/architecture/02-architecture-alignment.md`,
+  `docs/architecture/06-agent-runtime.md`,
+  `docs/architecture/05-agent-registry.md`,
+  `docs/architecture/10-skill-registry.md`,
+  `docs/architecture/11-workflow-engine.md`,
+  `docs/architecture/09-context-engine.md`,
+  `docs/architecture/17-tool-gateway.md`,
+  `docs/architecture/12-approval-engine.md`,
+  `docs/architecture/20-evaluation-engine.md`,
+  `docs/architecture/13-artifact-manager.md`, `docs/architecture/08-audit.md`,
+  `docs/architecture/03-governance.md`, `docs/architecture/07-persistence.md`,
+  `docs/architecture/14-handoff-registry.md`,
+  `docs/architecture/04-framework-agent.md`,
+  `docs/architecture/16-model-adapter.md` y `docs/session-log.md`.
+- Decisiones: mantener `01-framework-overview.md` como arquitectura objetivo;
+  documentar explicitamente componentes implementados, parciales y
+  conceptuales; no tocar codigo ni sobrescribir cambios previos del worktree.
+- Pruebas ejecutadas: validacion del framework y revision de archivos de
+  arquitectura.
+- Resultados: validacion del framework paso con `status=passed` y sin findings.
+- Siguiente paso: implementar `Agent Registry` o integrar ejecucion real de
+  skills mediante Model Gateway.
+
+## 2026-08-15 - Orden de lectura de arquitectura
+
+- Objetivo: renombrar los documentos `.md` de `docs/architecture/` con prefijo
+  numerico para fijar el orden de lectura.
+- Archivos modificados: `docs/architecture/01-framework-overview.md`,
+  `docs/architecture/02-architecture-alignment.md`,
+  `docs/architecture/03-governance.md`,
+  `docs/architecture/04-framework-agent.md`,
+  `docs/architecture/05-agent-registry.md`,
+  `docs/architecture/06-agent-runtime.md`,
+  `docs/architecture/07-persistence.md`, `docs/architecture/08-audit.md`,
+  `docs/architecture/09-context-engine.md`,
+  `docs/architecture/10-skill-registry.md`,
+  `docs/architecture/11-workflow-engine.md`,
+  `docs/architecture/12-approval-engine.md`,
+  `docs/architecture/13-artifact-manager.md`,
+  `docs/architecture/14-handoff-registry.md`,
+  `docs/architecture/15-model-gateway.md`,
+  `docs/architecture/16-model-adapter.md`,
+  `docs/architecture/17-tool-gateway.md`,
+  `docs/architecture/18-airtable-adapter-contract.md`,
+  `docs/architecture/19-airtable-tables.md`,
+  `docs/architecture/20-evaluation-engine.md`, `AGENTS.md`, `README.md`,
+  `docs/implementation-backlog.md` y `docs/session-log.md`.
+- Decisiones: usar prefijos `01-` a `20-` para mantener orden estable en
+  listados alfabeticos; actualizar referencias operativas actuales y conservar
+  referencias historicas en logs de sesiones previas.
+- Pruebas ejecutadas: `ariwalabs framework validate-repository --root .`,
+  busqueda de referencias operativas antiguas y `git diff --check` acotado a
+  archivos tocados.
+- Resultados: validacion del framework paso con `status=passed` y sin findings;
+  no quedan referencias operativas antiguas en los archivos actuales revisados.
+- Siguiente paso: implementar `Agent Registry` o integrar ejecucion real de
+  skills mediante Model Gateway.
+
+## 2026-08-15 - Backlog post-P2
+
+- Objetivo: corregir `docs/implementation-backlog.md` para que el cierre de P0,
+  P1 y P2 no oculte las brechas pendientes de arquitectura e implementacion.
+- Archivos modificados: `docs/implementation-backlog.md` y
+  `docs/session-log.md`.
+- Decisiones: agregar `P3 - Siguiente incremento post-P2` con Agent Registry,
+  ejecucion real de skills mediante Model Gateway, sincronizacion a Airtable,
+  resume de workflows aprobados, ejecucion de tools, handoffs runtime, errores
+  tipados y latencia; mover integraciones futuras a `P4 - Futuro`.
+- Pruebas ejecutadas: `ariwalabs framework validate-repository --root .` y
+  `git diff --check` acotado a los archivos tocados.
+- Resultados: validacion del framework paso con `status=passed` y sin findings;
+  el chequeo de whitespace acotado salio limpio.
+- Siguiente paso: implementar `Agent Registry` como primer item P3.
+
+## 2026-08-15 - Referencias de arquitectura a implementaciones
+
+- Objetivo: enlazar cada ficha `.md` de `docs/architecture/` con los documentos
+  historicos de `docs/implements/` que explican como se implemento cada
+  componente.
+- Archivos modificados: `docs/architecture/01-framework-overview.md`,
+  `docs/architecture/02-architecture-alignment.md`,
+  `docs/architecture/03-governance.md`,
+  `docs/architecture/04-framework-agent.md`,
+  `docs/architecture/05-agent-registry.md`,
+  `docs/architecture/06-agent-runtime.md`,
+  `docs/architecture/07-persistence.md`, `docs/architecture/08-audit.md`,
+  `docs/architecture/09-context-engine.md`,
+  `docs/architecture/10-skill-registry.md`,
+  `docs/architecture/11-workflow-engine.md`,
+  `docs/architecture/12-approval-engine.md`,
+  `docs/architecture/13-artifact-manager.md`,
+  `docs/architecture/14-handoff-registry.md`,
+  `docs/architecture/15-model-gateway.md`,
+  `docs/architecture/16-model-adapter.md`,
+  `docs/architecture/17-tool-gateway.md`,
+  `docs/architecture/18-airtable-adapter-contract.md`,
+  `docs/architecture/19-airtable-tables.md`,
+  `docs/architecture/20-evaluation-engine.md` y `docs/session-log.md`.
+- Decisiones: agregar una seccion `Implementacion relacionada` en cada ficha;
+  para Agent Registry, declarar que aun no existe archivo de implementacion
+  propio porque el componente sigue pendiente.
+- Pruebas ejecutadas: `ariwalabs framework validate-repository --root .`,
+  `git diff --check` acotado a `docs/architecture` y `docs/session-log.md`, y
+  comprobacion local de targets enlazados en `docs/implements/`.
+- Resultados: validacion del framework paso con `status=passed` y sin findings;
+  chequeo de whitespace limpio; todos los enlaces locales a `docs/implements/`
+  apuntan a archivos existentes.
+- Siguiente paso: implementar `Agent Registry` como primer item P3.
+
+## 2026-08-15 - Renombrar implements sin fecha
+
+- Objetivo: quitar el prefijo de fecha de los nombres `.md` en
+  `docs/implements/` y actualizar todas sus referencias internas.
+- Archivos modificados: todos los `.md` de `docs/implements/`,
+  referencias en `docs/architecture/*.md` y `docs/session-log.md`.
+- Decisiones: conservar la fecha dentro del contenido de cada archivo en el
+  campo `Fecha`, pero simplificar el nombre del archivo para lectura y
+  referencia estable.
+- Pruebas ejecutadas: `ariwalabs framework validate-repository --root .`,
+  `git diff --check` acotado a `docs/implements`, `docs/architecture` y
+  `docs/session-log.md`, busqueda de referencias antiguas con prefijo de fecha y
+  comprobacion local de targets enlazados hacia `docs/implements/`.
+- Resultados: validacion del framework paso con `status=passed` y sin findings;
+  chequeo de whitespace limpio; no quedan referencias antiguas con fecha; todos
+  los enlaces locales a `docs/implements/` apuntan a archivos existentes.
+- Siguiente paso: implementar `Agent Registry` como primer item P3.
+
+## 2026-08-15 - Estatus de componentes en framework overview
+
+- Objetivo: agregar indicadores visuales de estatus de implementacion por
+  componente en `docs/architecture/01-framework-overview.md`.
+- Archivos modificados: `docs/architecture/01-framework-overview.md` y
+  `docs/session-log.md`.
+- Decisiones: usar ✅ para terminado en el alcance actual del MVP, 🟡 para
+  componentes existentes con deuda funcional declarada y ⏳ para componentes
+  aun no implementados.
+- Pruebas ejecutadas: `ariwalabs framework validate-repository --root .` y
+  `git diff --check` acotado al archivo de arquitectura tocado.
+- Resultados: validacion del framework paso con `status=passed` y sin findings;
+  chequeo de whitespace limpio.
+- Siguiente paso: implementar `Agent Registry` como primer item P3.
+
+## 2026-08-15 - Separacion Core Framework y AriwaLabs Training Pack
+
+- Objetivo: iniciar la extraccion recomendada para distinguir el core generico
+  reutilizable del dominio AriwaLabs Training, con soporte basico de
+  `business_pack_id` sin mover todavia los activos reales de rutas historicas.
+- Archivos modificados: `business_packs/ariwalabs-training/pack.yaml`,
+  `business_packs/ariwalabs-training/README.md`,
+  `business_packs/example-service/pack.yaml`,
+  `business_packs/example-service/README.md`,
+  `src/ariwalabs/business_packs.py`,
+  `src/ariwalabs/framework_validator.py`, `src/ariwalabs/runtime.py`,
+  `src/ariwalabs/context_engine.py`, `src/ariwalabs/workflow_engine.py`,
+  `src/ariwalabs/skill_registry.py`, `src/ariwalabs/handoff_registry.py`,
+  `src/ariwalabs/evaluation_engine.py`, `src/ariwalabs/cli.py`,
+  `tests/unit/test_business_packs.py`,
+  `docs/architecture/21-core-business-pack-separation.md`,
+  `docs/architecture/01-framework-overview.md`, `docs/current-state.md`,
+  `docs/implementation-backlog.md`,
+  `docs/implements/separar-core-business-pack.md`, `AGENTS.md`, `README.md`,
+  `docs/roadmap/implementation-roadmap.md` y `docs/session-log.md`.
+- Decisiones: mantener agentes/contexto/policies en rutas historicas por
+  compatibilidad, pero resolverlos mediante `BusinessPackRegistry` cuando se
+  entregue `business_pack_id`; agregar un pack minimo `example-service` para
+  comprobar que el core no depende solo de AriwaLabs.
+- Pruebas ejecutadas: pytest focalizado para business packs, validators,
+  engines y Growth runtime; `ariwalabs framework validate-repository --root .`;
+  `ariwalabs framework validate-repository --root . --business-pack
+  ariwalabs-training`; `ruff check .`; `mypy src`; `pytest`; validacion local
+  de Markdown y enlaces/rutas internas; `git diff --check` acotado a archivos
+  tocados.
+- Resultados: pytest focalizado paso con 37 tests; validacion integral paso con
+  framework `status=passed` en modo default y pack, Ruff limpio, mypy limpio,
+  pytest completo con 119 tests, Markdown/enlaces locales limpios y chequeo de
+  whitespace limpio.
+- Siguiente paso: parametrizar loaders o implementar Agent Registry ya
+  considerando `business_pack_id`.
+
+## 2026-08-15 - Actualizacion integral README y documentacion
+
+- Objetivo: actualizar `README.md` tras la separacion Core Framework / Business
+  Packs y repetir una validacion integral documental para preparar la
+  implementacion paso a paso del backlog.
+- Archivos modificados: `README.md` y `docs/session-log.md`.
+- Decisiones: convertir el README en puerta de entrada actualizada con estado
+  real, core framework, business packs, comandos `--business-pack`, fuentes de
+  verdad, validaciones y siguiente trabajo desde `implementation-backlog.md`.
+- Pruebas ejecutadas: validacion local de Markdown y enlaces/rutas internas,
+  `ariwalabs framework validate-repository --root .`,
+  `ariwalabs framework validate-repository --root . --business-pack
+  ariwalabs-training`, `ruff check .`, `mypy src`, `pytest` y
+  `git diff --check` acotado a `README.md` y `docs/session-log.md`.
+- Resultados: README actualizado; validacion Markdown limpia; framework paso en
+  modo default y pack con `status=passed`; Ruff limpio; mypy limpio; pytest
+  completo paso con 119 tests; chequeo de whitespace limpio.
+- Siguiente paso: implementar `docs/implementation-backlog.md` paso a paso.
+
+## 2026-08-15 - Cierre P3 separacion Core y Business Pack
+
+- Objetivo: completar la separacion Core Framework / AriwaLabs Training Pack
+  con rutas fisicas multipack y policies separadas.
+- Archivos modificados: `business_packs/ariwalabs-training/`,
+  `business_packs/example-service/`, `framework/policies/`,
+  `src/ariwalabs/business_packs.py`, `src/ariwalabs/context_engine.py`,
+  `src/ariwalabs/handoff_registry.py`, tests de business packs/contexto/
+  validator y documentacion relacionada.
+- Decisiones: mantener las rutas historicas como modo default compatible; usar
+  `business_pack_id` para resolver activos fisicos del pack; permitir packs sin
+  handoffs cuando su manifest declara `handoffs: []`.
+- Pruebas ejecutadas: pytest focalizado de business packs/contexto/handoffs/
+  validator; `ariwalabs framework validate-repository --root .`;
+  `ariwalabs framework validate-repository --root . --business-pack
+  ariwalabs-training`; `ariwalabs framework validate-repository --root .
+  --business-pack example-service`; `ruff check .`; `mypy src`; `pytest`;
+  `git diff --check` acotado a archivos tocados; busqueda de narrativa
+  documental obsoleta.
+- Resultados: validacion del framework paso en modo default y en ambos packs;
+  Ruff limpio; mypy limpio; pytest completo paso con 120 tests; whitespace
+  limpio; no quedan referencias documentales obsoletas en los archivos
+  principales.
+- Siguiente paso: implementar `Agent Registry` multipack.
+
+## 2026-08-15 - Implementacion Agent Registry
+
+- Objetivo: implementar un registro local gobernado de agentes con soporte
+  default y multipack.
+- Archivos modificados: `src/ariwalabs/agent_registry.py`,
+  `src/ariwalabs/framework_validator.py`, `src/ariwalabs/cli.py`,
+  `tests/unit/test_agent_registry.py`, documentacion de arquitectura, backlog,
+  current-state, roadmap, README y este session log.
+- Decisiones: calcular el catalogo desde archivos versionados en vez de
+  materializar un indice; usar `business_pack_id` para cargar agentes desde
+  business packs; dejar release governance como contrato local inicial.
+- Pruebas ejecutadas: pytest focalizado de Agent Registry, Business Packs y
+  Framework Validator; Ruff focalizado; comandos `ariwalabs agent-registry`
+  list/show en modo default, `ariwalabs-training` y `example-service`;
+  `ariwalabs framework validate-repository --root .`; validacion del framework
+  con `--business-pack ariwalabs-training` y `--business-pack
+  example-service`; `ruff check .`; `mypy src`; `pytest`; `git diff --check`
+  acotado a archivos tocados.
+- Resultados: validacion del framework paso en modo default y en ambos packs;
+  CLI de Agent Registry funciono; Ruff limpio; mypy limpio; pytest completo
+  paso con 130 tests; whitespace limpio.
+- Siguiente paso: reanudar workflows despues de approvals.
+
+## 2026-08-15 - Ejecucion real de skills mediante Model Gateway
+
+- Objetivo: conectar pasos `skill` con `ModelGateway.generate_structured()`
+  usando prompts, schemas, input y contexto compuesto.
+- Archivos modificados: `src/ariwalabs/skill_executor.py`,
+  `src/ariwalabs/workflow_engine.py`, `src/ariwalabs/runtime.py`,
+  `adapters/models/fake.py`, tests de Skill Executor/Growth runtime,
+  documentacion de arquitectura, backlog, current-state, roadmap, README y este
+  session log.
+- Decisiones: mantener `__skill_results__` como override de regresion; mantener
+  simulacion cuando `WorkflowEngine` no recibe executor; usar provider fake por
+  defecto mediante `adapters.models.factory`.
+- Pruebas ejecutadas: pytest focalizado de Skill Executor, Model Gateway,
+  Workflow Engine y Growth runtime; Ruff focalizado; ejecucion runtime unica
+  con `business_pack_id=ariwalabs-training`; `ariwalabs framework
+  validate-repository --root .`; validacion del framework con `--business-pack
+  ariwalabs-training` y `--business-pack example-service`; `ruff check .`;
+  `mypy src`; `pytest`; `git diff --check` acotado a archivos tocados;
+  validacion local de referencias documentales.
+- Resultados: validacion del framework paso en modo default y en ambos packs;
+  la ejecucion runtime produjo `model_result` y evaluacion `passed`; Ruff
+  limpio; mypy limpio; pytest completo paso con 136 tests; whitespace y
+  referencias documentales limpias.
+- Siguiente paso: reanudar workflows despues de approvals o ejecutar tools
+  mediante Tool Gateway, segun prioridad del backlog.
+
+## 2026-08-15 - Sincronizacion runtime hacia Airtable
+
+- Objetivo: sincronizar ejecuciones, approvals y artifacts desde JSON local
+  hacia Airtable con idempotencia y auditoria.
+- Archivos modificados: `src/ariwalabs/airtable_sync.py`,
+  `src/ariwalabs/cli.py`, `tests/unit/test_airtable_sync.py`,
+  `tests/unit/test_airtable_cli.py`, documentacion de arquitectura, backlog,
+  current-state, roadmap, README y este session log.
+- Decisiones: mantener la sincronizacion como accion CLI explicita
+  `ariwalabs airtable sync-execution`; escribir llaves externas estables en vez
+  de crear links Airtable automaticos en este incremento.
+- Pruebas ejecutadas: pytest focalizado de Airtable Sync, Adapter y CLI; Ruff
+  focalizado; mypy focalizado; `ariwalabs framework validate-repository --root
+  .`; validacion del framework con `--business-pack ariwalabs-training` y
+  `--business-pack example-service`; `ruff check .`; `mypy src`; `pytest`;
+  `git diff --check` acotado a archivos tocados; validacion local de
+  referencias documentales.
+- Resultados: validacion del framework paso en modo default y en ambos packs;
+  Ruff limpio; mypy limpio; pytest completo paso con 141 tests; whitespace y
+  referencias documentales limpias.
+- Siguiente paso: reanudar workflows despues de approvals o ejecutar tools
+  mediante Tool Gateway, segun prioridad del backlog.
+
+## 2026-08-15 - Reanudacion de workflows despues de approvals
+
+- Objetivo: permitir que ejecuciones aprobadas continuen desde el checkpoint
+  aprobado sin duplicar approvals, artifacts ni pasos previos.
+- Archivos modificados: `src/ariwalabs/workflow_engine.py`,
+  `src/ariwalabs/runtime.py`, `src/ariwalabs/cli.py`,
+  `tests/integration/test_growth_runtime.py`, `tests/unit/test_approval_cli.py`
+  y documentacion relacionada.
+- Decisiones: mantener la reanudacion como accion CLI explicita
+  `ariwalabs execution resume`; soportar checkpoints top-level en este
+  incremento.
+- Pruebas ejecutadas: pytest focalizado de Growth runtime, Approval CLI y
+  Workflow Engine; Ruff focalizado; mypy; `ariwalabs framework
+  validate-repository --root .`; validacion del framework con `--business-pack
+  ariwalabs-training` y `--business-pack example-service`; `ruff check .`;
+  `mypy src`; `pytest`; `git diff --check` acotado a archivos tocados.
+- Resultados: validacion del framework paso en modo default y en ambos packs;
+  Ruff limpio; mypy limpio; pytest completo paso con 144 tests; whitespace
+  limpio.
+- Siguiente paso: ejecutar tools mediante Tool Gateway.
+
+## 2026-08-15 - Cierre pendientes P3 post-P2
+
+- Objetivo: implementar todos los pendientes restantes de P3: Tool Gateway
+  ejecutable, Handoff Runtime, errores tipados en runtime/CLI y metricas de
+  latencia; ademas documentar estrategia de tests.
+- Archivos modificados: `src/ariwalabs/tool_gateway.py`,
+  `src/ariwalabs/handoff_registry.py`, `src/ariwalabs/handoff_runtime.py`,
+  `src/ariwalabs/errors.py`, `src/ariwalabs/runtime.py`,
+  `src/ariwalabs/model_gateway.py`, `src/ariwalabs/cli.py`,
+  `adapters/airtable/client.py`, tests unitarios/integracion, arquitectura,
+  backlog, current-state, roadmap, README y `tests/README.md`.
+- Decisiones: mantener tools y handoffs como ejecuciones gobernadas explicitas;
+  bloquear tools/handoffs que requieren aprobacion si no reciben approval
+  explicito; registrar `duration_ms` en auditoria sin exponer secretos.
+- Pruebas ejecutadas: pytest focalizado de Tool Gateway, Handoff Registry,
+  Handoff Runtime, Model Gateway, Airtable Adapter, Growth Runtime, Approval
+  CLI y Airtable CLI; Ruff focalizado; `ariwalabs framework
+  validate-repository --root .`; validacion con `--business-pack
+  ariwalabs-training` y `--business-pack example-service`; `ruff check .`;
+  `mypy src`; `pytest`; validacion local de enlaces Markdown; `git diff
+  --check` excluyendo `runtime/data`.
+- Resultados: validacion del framework paso en modo default y en ambos packs;
+  Ruff limpio; mypy limpio; pytest completo paso con 156 tests; enlaces
+  Markdown locales limpios; whitespace limpio en archivos versionables tocados.
+  `git diff --check` completo sigue reportando archivos historicos sucios bajo
+  `runtime/data/idempotency/`, no corregidos por ser datos locales ajenos.
+- Siguiente paso: definir el incremento posterior a P3.
