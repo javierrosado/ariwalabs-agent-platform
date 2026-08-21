@@ -1,6 +1,6 @@
 # Current State
 
-Fecha de actualizacion: 2026-08-15
+Fecha de actualizacion: 2026-08-21
 Version declarada: 0.1.0 en `pyproject.toml`; `framework-agent` 0.1.0;
 `growth-marketing-agent` 0.2.0.
 
@@ -129,6 +129,14 @@ Version declarada: 0.1.0 en `pyproject.toml`; `framework-agent` 0.1.0;
   `status=failed`.
 - Metricas de latencia en eventos de auditoria de ejecucion, requests de
   modelo, tools, handoffs y requests Airtable.
+- Backlog P3 "Siguiente incremento post-P2" cerrado formalmente para su alcance
+  el 2026-08-15.
+- Backlog P4 "Siguiente incremento post-P3" priorizado el 2026-08-20 y
+  pendiente de implementacion paso a paso.
+- Schemas comunes del Core en `shared/schemas/core/` para agentes, skills,
+  workflows, business packs, handoffs, approvals y artifacts; `CoreSchemaValidator`
+  los aplica en registries, validacion de workflows declarados, Approval Engine
+  y Artifact Manager.
 
 ## Parcial
 
@@ -149,6 +157,8 @@ Version declarada: 0.1.0 en `pyproject.toml`; `framework-agent` 0.1.0;
   `https://github.com/javierrosado/ariwalabs-agent-platform.git`.
 - La validacion del framework usa `SkillRegistry` y `HandoffRegistry`, pero aun
   no comprueba existencia de prompts.
+- `common.schema.json` documenta definiciones comunes, pero los schemas core aun
+  no usan referencias multiarchivo para evitar complejidad de resolucion.
 - `ContextEngine` aun no selecciona subconjuntos por skill ni presupuestos de
   tokens; compone todo el contexto declarado por agente para el workflow.
 - `EvaluationEngine` aun usa rubricas base estaticas; falta calibrar criterios
@@ -288,8 +298,23 @@ Version declarada: 0.1.0 en `pyproject.toml`; `framework-agent` 0.1.0;
   - `.venv/Scripts/python.exe -m mypy src`
   - `.venv/Scripts/python.exe -m pytest`
   - Resultado: paso; `pytest` reporto 115 tests.
+- Para schemas comunes del Core se ejecuto el 2026-08-21:
+  - `.venv/Scripts/python.exe -m pytest` sobre Schema Validator, Agent
+    Registry, Skill Registry, Handoff Registry, Business Pack Registry,
+    Approval Engine y Artifact Manager.
+  - `.venv/Scripts/python.exe -m ruff check src tests`
+  - `.venv/Scripts/python.exe -m mypy src`
+  - `.venv/Scripts/ariwalabs.exe framework validate-repository --root .`
+  - `.venv/Scripts/ariwalabs.exe framework validate-repository --root .
+    --business-pack ariwalabs-training`
+  - `.venv/Scripts/ariwalabs.exe framework validate-repository --root .
+    --business-pack example-service`
+  - `.venv/Scripts/python.exe -m pytest`
+  - `git diff --check -- src tests shared/schemas docs`
+  - Resultado: paso; el set focalizado reporto 42 tests y la suite completa
+    reporto 162 tests. `git diff --check` global sigue reportando cambios
+    historicos bajo `runtime/data`, no modificados como parte del cierre.
 
 ## Siguiente objetivo recomendado
 
-Continuar P3 con reanudacion de workflows despues de approvals o ejecucion de
-tools reales mediante Tool Gateway.
+Continuar P4 con `Conectar Agent Registry con approvals reales`.

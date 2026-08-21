@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AriwaLabsCoreAgentContract",
+  "type": "object",
+  "required": [
+    "agent"
+  ],
+  "properties": {
+    "agent": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "version",
+        "purpose",
+        "owner",
+        "autonomy",
+        "skills",
+        "workflows"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "autonomy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shared_context": {
+          "$ref": "#/$defs/string_list"
+        },
+        "model_profiles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "enum": [
+              "reasoning",
+              "generation",
+              "evaluation",
+              "fast_structured"
+            ]
+          }
+        },
+        "skills": {
+          "$ref": "#/$defs/string_list"
+        },
+        "workflows": {
+          "$ref": "#/$defs/string_list"
+        },
+        "approvals": {
+          "$ref": "#/$defs/string_list"
+        },
+        "approval_required": {
+          "$ref": "#/$defs/string_list"
+        },
+        "prohibited": {
+          "$ref": "#/$defs/string_list"
+        },
+        "release_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "validated",
+            "pending_approval",
+            "approved",
+            "released",
+            "deprecated",
+            "blocked"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "string_list": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

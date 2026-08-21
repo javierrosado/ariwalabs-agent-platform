@@ -66,6 +66,7 @@ def test_agent_registry_detects_invalid_version(tmp_path: Path) -> None:
         "version debe usar formato N.N.N" in finding["message"]
         for finding in findings
     )
+    assert any("agent.schema.json" in finding["message"] for finding in findings)
 
 
 def test_agent_registry_detects_owner_mismatch_in_pack(tmp_path: Path) -> None:
@@ -84,6 +85,24 @@ def test_agent_registry_detects_missing_workflow(tmp_path: Path) -> None:
     findings = AgentRegistry(tmp_path).validate_repository()
 
     assert any("workflow no encontrado missing-workflow" in finding["message"] for finding in findings)
+
+
+def test_agent_registry_validates_workflow_schema(tmp_path: Path) -> None:
+    agent_dir = write_minimal_agent(tmp_path)
+    workflow_path = agent_dir / "workflows" / "sample-workflow.yaml"
+    workflow_path.write_text(
+        """
+        workflow:
+          id: sample-workflow
+          steps:
+            - checkpoint: invalid_step_without_type
+        """,
+        encoding="utf-8",
+    )
+
+    findings = AgentRegistry(tmp_path).validate_repository()
+
+    assert any("workflow.schema.json" in finding["message"] for finding in findings)
 
 
 def test_agent_registry_detects_missing_skill(tmp_path: Path) -> None:

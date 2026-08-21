@@ -116,9 +116,9 @@ Estado general: cerrado el 2026-08-10.
   - Aceptacion: compone contexto compartido por agente/workflow sin duplicacion.
   - Dependencias: catalogo de contexto.
 
-## P3 - Siguiente incremento post-P2
+## P3 - Cerrado
 
-Estado general: implementado para el alcance P3 el 2026-08-15.
+Estado general: cerrado para el alcance P3 el 2026-08-15.
 
 - Separar Core Framework y AriwaLabs Training Pack.
   - Estado: implementado el 2026-08-15; existen manifests en
@@ -132,7 +132,7 @@ Estado general: implementado para el alcance P3 el 2026-08-15.
   - Pendiente posterior: migrar referencias documentales historicas hacia rutas
     de pack y formalizar schemas comunes de core.
   - Dependencias: `ContextEngine`, `FrameworkValidator`, `SkillRegistry`,
-    `HandoffRegistry`, `AgentRuntime` y futuro `AgentRegistry`.
+    `HandoffRegistry`, `AgentRuntime` y `AgentRegistry`.
 - Implementar Agent Registry.
   - Estado: implementado el 2026-08-15 como
     `src/ariwalabs/agent_registry.py`, integrado con `FrameworkValidator` y
@@ -218,13 +218,94 @@ Estado general: implementado para el alcance P3 el 2026-08-15.
     skill, provider y adapter.
   - Dependencias: Audit, Model Gateway, Tool Gateway y adapters.
 
-## P4 - Futuro
+## P4 - Siguiente incremento post-P3
 
-- WhatsApp Business Platform mediante adapter.
-- Email transaccional.
-- Calendario Google o Microsoft.
-- Publicacion social semimanual.
-- Pasarela de pago.
-- Azure o Microsoft Foundry.
-- Nuevos agentes: Training Program, Student Success, Corporate Opportunity,
-  Content, Sales Proposal, Project Delivery y Finance & Administration.
+Estado general: priorizado el 2026-08-20; pendiente de implementacion paso a
+paso.
+
+- Formalizar schemas comunes del Core.
+  - Estado: implementado el 2026-08-21 mediante `shared/schemas/core/` y
+    `src/ariwalabs/schema_validator.py`.
+  - Aceptacion: existen contratos canonicos versionados para agents, skills,
+    workflows, approvals, artifacts, handoffs y business packs; los validadores
+    usan esos contratos sin duplicar reglas de dominio.
+  - Pendiente posterior: evaluar referencias multiarchivo reales desde
+    `common.schema.json` cuando los contratos crezcan y migrar consumidores
+    historicos de `shared/schemas/handoff.schema.json`.
+  - Dependencias: `BusinessPackRegistry`, `AgentRegistry`, `SkillRegistry`,
+    `HandoffRegistry`, `WorkflowEngine`, `ApprovalEngine` y `ArtifactManager`.
+- Conectar Agent Registry con approvals reales.
+  - Estado: pendiente.
+  - Aceptacion: los cambios o releases sensibles de agentes generan approvals
+    mediante `ApprovalEngine`; `company-director` conserva aprobacion
+    obligatoria; CLI y auditoria muestran decision, razon y version afectada.
+  - Dependencias: `AgentRegistry`, `ApprovalEngine`, `AuditLogger`,
+    `JsonRepository` y schemas comunes del Core.
+- Definir politica de automatizacion gobernada para resume, sync y tools.
+  - Estado: pendiente.
+  - Aceptacion: existe una politica documentada y validada que define que
+    acciones siguen siendo CLI explicitas y cuales pueden ejecutarse
+    automaticamente despues de approvals; toda accion externa mantiene bloqueo
+    sin aprobacion de Javier.
+  - Dependencias: `ApprovalEngine`, `AgentRuntime.resume()`,
+    `airtable_sync`, `ToolGateway`, politicas core y politicas de pack.
+- Integrar invocaciones de Tool Gateway desde workflows/skills.
+  - Estado: pendiente.
+  - Aceptacion: workflows y/o skills pueden invocar tools gobernadas solo cuando
+    exista contrato explicito de input/output, approval, auditoria, adapter e
+    idempotencia; las acciones externas prohibidas siguen bloqueadas.
+  - Dependencias: politica de automatizacion gobernada, `ToolGateway`,
+    `WorkflowEngine`, `SkillExecutor`, adapters y `ApprovalEngine`.
+- Completar sincronizacion operacional Airtable.
+  - Estado: pendiente.
+  - Aceptacion: `AgentExecutions`, `Approvals` y `Artifacts` quedan enlazados
+    relacionalmente en Airtable cuando aplique; existen vistas operativas para
+    Javier; se decide si los handoffs requieren tabla canonica propia.
+  - Dependencias: `airtable_sync`, contrato de tablas Airtable,
+    `HandoffRuntime`, `ApprovalEngine` y `JsonRepository`.
+- Calibrar prompts, outputs y rubricas con provider real.
+  - Estado: pendiente.
+  - Aceptacion: Growth & Marketing Agent ejecuta workflows principales con
+    OpenAI real sobre datos controlados; prompts, schemas y rubricas se ajustan
+    con fixtures de regresion; no se registran secretos ni datos sensibles en
+    auditoria.
+  - Dependencias: `ModelGateway`, `OpenAIModelAdapter`, `SkillExecutor`,
+    `EvaluationEngine`, fixtures Growth y `.env` local.
+- Extender errores tipados a validadores, repositorio y adapters.
+  - Estado: pendiente.
+  - Aceptacion: validadores, persistencia local y adapters devuelven errores
+    tipados del framework; CLI expone respuestas JSON estables y auditables para
+    fallos de validacion, persistencia e integracion.
+  - Dependencias: `errors.py`, `FrameworkValidator`, registries,
+    `JsonRepository`, adapters y CLI.
+- Agregar reportes operativos de observabilidad.
+  - Estado: pendiente.
+  - Aceptacion: existen agregaciones locales por workflow, skill, provider,
+    adapter, tokens, costo y latencia; los reportes se generan sin exponer
+    secretos ni payloads sensibles.
+  - Dependencias: `AuditLogger`, metricas de costos/tokens, latencia auditada y
+    CLI.
+- Corregir deuda documental post-P3.
+  - Estado: pendiente.
+  - Aceptacion: documentos de arquitectura, current-state y roadmap no contienen
+    pendientes ya implementados; referencias historicas se migran gradualmente a
+    rutas de business pack sin romper compatibilidad del modo default.
+  - Dependencias: `docs/architecture/`, `docs/current-state.md`,
+    `docs/roadmap/implementation-roadmap.md`, `business_packs/` y rutas
+    historicas `agents/`, `shared/`, `docs/handoffs/`.
+- Evaluar primera integracion externa posterior.
+  - Estado: futuro.
+  - Aceptacion: se elige la primera integracion entre WhatsApp Business
+    Platform, email transaccional o calendario; existe ADR con riesgos,
+    aprobaciones, adapter requerido, datos tratados y criterio de no accion
+    externa sin Javier.
+  - Dependencias: politica de automatizacion gobernada, Tool Gateway,
+    Approval Engine, adapters y contexto operacional de AriwaLabs.
+- Evaluar nuevos agentes de dominio.
+  - Estado: futuro.
+  - Aceptacion: no se inicia un agente nuevo hasta que Growth & Marketing Agent
+    ejecute workflows principales con skills reales o fixtures aprobados,
+    genere artifacts conformes, registre approvals, sincronice ejecuciones
+    relevantes con Airtable y pase regresion.
+  - Dependencias: cierre de los items operativos P4 y criterio de roadmap para
+    nuevos agentes.

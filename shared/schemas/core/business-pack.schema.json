@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AriwaLabsCoreBusinessPackContract",
+  "type": "object",
+  "required": [
+    "business_pack"
+  ],
+  "properties": {
+    "business_pack": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "version",
+        "purpose",
+        "domain_assets"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "status": {
+          "type": "string"
+        },
+        "owner_role": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        },
+        "core_framework": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "domain_assets": {
+          "type": "object",
+          "required": [
+            "agents",
+            "context",
+            "policies",
+            "handoffs"
+          ],
+          "properties": {
+            "agents": {
+              "$ref": "#/$defs/string_list"
+            },
+            "context": {
+              "$ref": "#/$defs/string_list"
+            },
+            "policies": {
+              "$ref": "#/$defs/string_list"
+            },
+            "handoffs": {
+              "$ref": "#/$defs/string_list"
+            },
+            "operations": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "domain_boundaries": {
+          "type": "object",
+          "properties": {
+            "belongs_to_core": {
+              "$ref": "#/$defs/string_list"
+            },
+            "belongs_to_pack": {
+              "$ref": "#/$defs/string_list"
+            }
+          },
+          "additionalProperties": false
+        },
+        "pending_extraction": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "owner_role"
+          ]
+        },
+        {
+          "required": [
+            "owner"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "string_list": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

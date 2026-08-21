@@ -147,6 +147,7 @@ especificos de implementacion por componente.
 - [metricas-latencia.md](../implements/metricas-latencia.md)
 - [evaluacion-independiente.md](../implements/evaluacion-independiente.md)
 - [separar-core-business-pack.md](../implements/separar-core-business-pack.md)
+- [formalizar-schemas-core.md](../implements/formalizar-schemas-core.md)
 
 ## Principio principal
 

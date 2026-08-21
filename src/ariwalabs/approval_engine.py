@@ -5,6 +5,7 @@ from uuid import uuid4
 
 from .audit import AuditLogger
 from .repository import JsonRepository
+from .schema_validator import CoreSchemaValidator
 
 
 class ApprovalEngine:
@@ -12,6 +13,7 @@ class ApprovalEngine:
         self.root = root.resolve()
         self.repo = JsonRepository(self.root / "runtime/data")
         self.audit = AuditLogger(self.root / "runtime/data/audit.jsonl")
+        self.schema_validator = CoreSchemaValidator(self.root)
 
     def create_pending(
         self,
@@ -40,6 +42,7 @@ class ApprovalEngine:
             "reason": None,
             "decided_by": None,
         }
+        self._validate_approval_record(approval)
         self.repo.save("approvals", approval_id, approval)
         self.audit.approval(
             "approval.created",
@@ -88,6 +91,7 @@ class ApprovalEngine:
         approval["reason"] = reason
         approval["decided_by"] = decided_by
         approval["decided_at"] = datetime.now(UTC).isoformat()
+        self._validate_approval_record(approval)
         self.repo.save("approvals", approval_id, approval)
         self._update_execution(approval)
         self.audit.approval(
@@ -121,3 +125,14 @@ class ApprovalEngine:
             else "rejected"
         )
         self.repo.save("executions", execution_id, execution)
+
+    def _validate_approval_record(self, approval: dict[str, Any]) -> None:
+        findings = self.schema_validator.validate_payload(
+            payload=approval,
+            schema_name="approval.schema.json",
+            source_path=self.root / "runtime/data/approvals",
+        )
+        if findings:
+            messages = "; ".join(finding["message"] for finding in findings)
+            msg = f"approval invalido: {messages}"
+            raise ValueError(msg)

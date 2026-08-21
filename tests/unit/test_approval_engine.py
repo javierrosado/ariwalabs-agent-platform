@@ -139,3 +139,24 @@ def test_approval_engine_blocks_non_director_decision(tmp_path: Path) -> None:
         assert "decided_by debe ser company-director" in str(exc)
     else:
         raise AssertionError("decision de otro usuario debio fallar")
+
+
+def test_approval_engine_validates_record_against_core_schema(tmp_path: Path) -> None:
+    engine = ApprovalEngine(tmp_path)
+    invalid_approval = {
+        "approval_id": "appr-test",
+        "execution_id": "exec-test",
+        "agent_id": "growth-marketing-agent",
+        "workflow_id": "create-training-campaign",
+        "checkpoint": "approve_campaign",
+        "approver": "company-director",
+        "status": "waiting",
+        "created_at": "2026-08-20T00:00:00+00:00",
+    }
+
+    try:
+        engine._validate_approval_record(invalid_approval)
+    except ValueError as exc:
+        assert "approval.schema.json" in str(exc)
+    else:
+        raise AssertionError("approval fuera de schema debio fallar")

@@ -1172,3 +1172,41 @@ Este archivo es append-only. No borrar entradas anteriores.
   `git diff --check` completo sigue reportando archivos historicos sucios bajo
   `runtime/data/idempotency/`, no corregidos por ser datos locales ajenos.
 - Siguiente paso: definir el incremento posterior a P3.
+
+## 2026-08-20 - Cierre formal P3 y priorizacion P4
+
+- Objetivo: marcar P3 como cerrado formalmente para su alcance y dejar P4 como
+  unico incremento pendiente priorizado.
+- Archivos modificados: `docs/implementation-backlog.md`,
+  `docs/current-state.md` y este session log.
+- Decisiones: mantener los pendientes posteriores de P3 dentro de P4; no
+  reabrir P3 por deuda documental o decisiones de automatizacion futuras.
+- Pruebas ejecutadas: revision de diff y `git diff --check` acotado a
+  documentacion.
+- Resultados: P3 queda cerrado para su alcance del 2026-08-15; P4 queda como
+  siguiente incremento pendiente para implementar paso a paso.
+- Siguiente paso: iniciar P4 por `Formalizar schemas comunes del Core`.
+
+## 2026-08-21 - P4.1 schemas comunes del Core
+
+- Objetivo: formalizar contratos JSON Schema comunes para agentes, skills,
+  workflows, business packs, handoffs, approvals y artifacts.
+- Archivos modificados: `shared/schemas/core/*.schema.json`,
+  `src/ariwalabs/schema_validator.py`, registries, Approval Engine, Artifact
+  Manager, tests unitarios, arquitectura, backlog, current-state y este session
+  log.
+- Decisiones: separar validacion estructural por schema de reglas semanticas en
+  Python; mantener compatibilidad con `shared/schemas/handoff.schema.json`;
+  dejar `common.schema.json` como definiciones documentales sin referencias
+  multiarchivo por ahora.
+- Pruebas ejecutadas: pytest focalizado de Schema Validator, Agent Registry,
+  Skill Registry, Handoff Registry, Business Pack Registry, Approval Engine y
+  Artifact Manager; `ruff check src tests`; `mypy src`; validacion del
+  framework en modo default, `ariwalabs-training` y `example-service`; `pytest`;
+  `git diff --check -- src tests shared/schemas docs`.
+- Resultados: set focalizado paso con 42 tests; validacion del framework paso
+  en los tres modos; Ruff limpio; mypy limpio; suite completa paso con 162
+  tests; whitespace limpio en archivos versionables tocados. `git diff --check`
+  global sigue reportando datos locales bajo `runtime/data`.
+- Siguiente paso: continuar P4 con `Conectar Agent Registry con approvals
+  reales`.

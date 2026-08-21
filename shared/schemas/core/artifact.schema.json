@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AriwaLabsCoreArtifactRecord",
+  "type": "object",
+  "required": [
+    "artifact_id",
+    "execution_id",
+    "agent_id",
+    "workflow_id",
+    "artifact_type",
+    "source_action",
+    "status",
+    "metadata",
+    "version",
+    "created_at"
+  ],
+  "properties": {
+    "artifact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "execution_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workflow_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifact_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "archived",
+        "draft",
+        "pending_approval",
+        "rejected"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AriwaLabsCoreSkillContract",
+  "type": "object",
+  "required": [
+    "skill"
+  ],
+  "properties": {
+    "skill": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "purpose",
+        "model_profile",
+        "approval_required",
+        "output_schema"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_profile": {
+          "type": "string",
+          "enum": [
+            "reasoning",
+            "generation",
+            "evaluation",
+            "fast_structured"
+          ]
+        },
+        "approval_required": {
+          "type": "boolean"
+        },
+        "tools": {
+          "type": "object",
+          "properties": {
+            "allowed": {
+              "$ref": "#/$defs/string_list"
+            },
+            "prohibited": {
+              "$ref": "#/$defs/string_list"
+            }
+          },
+          "additionalProperties": false
+        },
+        "output_schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "string_list": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

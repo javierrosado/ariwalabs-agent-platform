@@ -5,6 +5,7 @@ from typing import Any
 
 from .business_packs import BusinessPackRegistry
 from .config import load_yaml
+from .schema_validator import CoreSchemaValidator
 
 Finding = dict[str, str]
 
@@ -57,6 +58,7 @@ class HandoffRegistry:
         self.root = root.resolve()
         self.business_pack_id = business_pack_id
         self.business_packs = BusinessPackRegistry(self.root)
+        self.schema_validator = CoreSchemaValidator(self.root)
 
     def validate_repository(self) -> list[Finding]:
         findings: list[Finding] = []
@@ -118,6 +120,13 @@ class HandoffRegistry:
     def _load_handoff_file(self, path: Path) -> tuple[list[Finding], list[HandoffRecord]]:
         findings: list[Finding] = []
         payload = load_yaml(path)
+        findings.extend(
+            self.schema_validator.validate_payload(
+                payload=payload,
+                schema_name="handoff.schema.json",
+                source_path=path,
+            )
+        )
         raw_handoffs = payload.get("handoffs")
         if not isinstance(raw_handoffs, list):
             return [

@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AriwaLabsCoreHandoffContract",
+  "type": "object",
+  "required": [
+    "handoffs"
+  ],
+  "properties": {
+    "handoffs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "version",
+          "producer",
+          "consumer",
+          "trigger",
+          "input",
+          "output",
+          "preconditions",
+          "approval",
+          "persistence",
+          "errors",
+          "idempotency"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          },
+          "producer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "consumer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "trigger": {
+            "type": "string",
+            "minLength": 1
+          },
+          "input": {
+            "$ref": "#/$defs/field_contract"
+          },
+          "output": {
+            "$ref": "#/$defs/field_contract"
+          },
+          "preconditions": {
+            "$ref": "#/$defs/string_list"
+          },
+          "approval": {
+            "type": "object",
+            "required": [
+              "required",
+              "approver",
+              "checkpoint"
+            ],
+            "properties": {
+              "required": {
+                "type": "boolean"
+              },
+              "approver": {
+                "type": "string",
+                "minLength": 1
+              },
+              "checkpoint": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "persistence": {
+            "type": "object",
+            "required": [
+              "current",
+              "future"
+            ],
+            "properties": {
+              "current": {
+                "type": "string",
+                "minLength": 1
+              },
+              "future": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "errors": {
+            "$ref": "#/$defs/string_list"
+          },
+          "idempotency": {
+            "type": "object",
+            "required": [
+              "key_strategy"
+            ],
+            "properties": {
+              "key_strategy": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "field_contract": {
+      "type": "object",
+      "required": [
+        "required"
+      ],
+      "properties": {
+        "required": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "string_list": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any
 
 from .config import load_yaml
+from .schema_validator import CoreSchemaValidator
 
 Finding = dict[str, str]
 
@@ -33,6 +34,7 @@ class BusinessPack:
 class BusinessPackRegistry:
     def __init__(self, root: Path):
         self.root = root.resolve()
+        self.schema_validator = CoreSchemaValidator(self.root)
 
     def default_agents_dir(self) -> Path:
         return self.root / "agents"
@@ -95,7 +97,15 @@ class BusinessPackRegistry:
 
     def _validate_pack(self, pack_yaml: Path, seen_ids: dict[str, Path]) -> list[Finding]:
         findings: list[Finding] = []
-        payload = load_yaml(pack_yaml).get("business_pack")
+        raw_payload = load_yaml(pack_yaml)
+        findings.extend(
+            self.schema_validator.validate_payload(
+                payload=raw_payload,
+                schema_name="business-pack.schema.json",
+                source_path=pack_yaml,
+            )
+        )
+        payload = raw_payload.get("business_pack")
         if not isinstance(payload, dict):
             return [self._finding("error", self._format(pack_yaml, "falta business_pack"))]
         pack_id = payload.get("id")

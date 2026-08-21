@@ -7,6 +7,7 @@ from typing import Any
 from .business_packs import BusinessPackRegistry
 from .config import load_yaml
 from .model_profiles import SUPPORTED_MODEL_PROFILES
+from .schema_validator import CoreSchemaValidator
 from .tool_gateway import ToolGateway
 
 Finding = dict[str, str]
@@ -41,6 +42,7 @@ class SkillRegistry:
         self.root = root.resolve()
         self.business_pack_id = business_pack_id
         self.business_packs = BusinessPackRegistry(self.root)
+        self.schema_validator = CoreSchemaValidator(self.root)
         self.tool_gateway = ToolGateway(self.root)
 
     def validate_repository(self) -> list[Finding]:
@@ -90,10 +92,19 @@ class SkillRegistry:
         skill_path: Path,
     ) -> tuple[list[Finding], SkillRecord | None]:
         findings: list[Finding] = []
-        skill_payload = load_yaml(skill_path).get("skill")
+        raw_payload = load_yaml(skill_path)
+        findings.extend(
+            self.schema_validator.validate_payload(
+                payload=raw_payload,
+                schema_name="skill.schema.json",
+                source_path=skill_path,
+            )
+        )
+        skill_payload = raw_payload.get("skill")
         if not isinstance(skill_payload, dict):
             return [self._finding("error", self._format(skill_path, "falta seccion skill"))], None
 
+        blocking_findings: list[Finding] = []
         required = [
             "id",
             "version",
@@ -104,7 +115,9 @@ class SkillRegistry:
         ]
         for field in required:
             if field not in skill_payload:
-                findings.append(self._finding("error", self._format(skill_path, f"falta {field}")))
+                blocking_findings.append(
+                    self._finding("error", self._format(skill_path, f"falta {field}"))
+                )
 
         skill_id = skill_payload.get("id")
         version = skill_payload.get("version")
@@ -116,25 +129,27 @@ class SkillRegistry:
         prohibited = self._load_tool_list(skill_path, tools, "prohibited", findings)
 
         if not isinstance(skill_id, str):
-            findings.append(self._finding("error", self._format(skill_path, "id debe ser string")))
+            blocking_findings.append(
+                self._finding("error", self._format(skill_path, "id debe ser string"))
+            )
             skill_id = ""
         if not isinstance(version, str):
-            findings.append(
+            blocking_findings.append(
                 self._finding("error", self._format(skill_path, "version debe ser string"))
             )
             version = ""
         if not isinstance(model_profile, str):
-            findings.append(
+            blocking_findings.append(
                 self._finding("error", self._format(skill_path, "model_profile debe ser string"))
             )
             model_profile = ""
         if not isinstance(output_schema, str):
-            findings.append(
+            blocking_findings.append(
                 self._finding("error", self._format(skill_path, "output_schema debe ser string"))
             )
             output_schema = ""
         if not isinstance(approval_required, bool):
-            findings.append(
+            blocking_findings.append(
                 self._finding(
                     "error",
                     self._format(skill_path, "approval_required debe ser boolean"),
@@ -142,7 +157,8 @@ class SkillRegistry:
             )
             approval_required = False
 
-        if findings:
+        findings.extend(blocking_findings)
+        if blocking_findings:
             return findings, None
 
         agent_id = str(agent_config.get("id", agent_dir.name))

@@ -9,3 +9,4 @@ runtime/data/executions/*.json
 runtime/data/approvals/*.json
 runtime/data/artifacts/*
 runtime/data/audit.jsonl
+runtime/data/idempotency/*

@@ -5,6 +5,7 @@ from uuid import uuid4
 
 from .audit import AuditLogger
 from .repository import JsonRepository
+from .schema_validator import CoreSchemaValidator
 
 VALID_STATUSES = {
     "approved",
@@ -20,6 +21,7 @@ class ArtifactManager:
         self.root = root.resolve()
         self.repo = JsonRepository(self.root / "runtime/data")
         self.audit = AuditLogger(self.root / "runtime/data/audit.jsonl")
+        self.schema_validator = CoreSchemaValidator(self.root)
 
     def create(
         self,
@@ -56,6 +58,7 @@ class ArtifactManager:
             "version": "0.1.0",
             "created_at": datetime.now(UTC).isoformat(),
         }
+        self._validate_artifact_record(artifact)
         self.repo.save("artifacts", artifact_id, artifact)
         self.audit.artifact(
             "artifact.created",
@@ -98,4 +101,15 @@ class ArtifactManager:
         missing = [field for field, value in values.items() if not value.strip()]
         if missing:
             msg = f"campos requeridos vacios: {missing}"
+            raise ValueError(msg)
+
+    def _validate_artifact_record(self, artifact: dict[str, Any]) -> None:
+        findings = self.schema_validator.validate_payload(
+            payload=artifact,
+            schema_name="artifact.schema.json",
+            source_path=self.root / "runtime/data/artifacts",
+        )
+        if findings:
+            messages = "; ".join(finding["message"] for finding in findings)
+            msg = f"artifact invalido: {messages}"
             raise ValueError(msg)

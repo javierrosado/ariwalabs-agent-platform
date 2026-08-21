@@ -6,6 +6,7 @@ from typing import Any
 from .business_packs import BusinessPackRegistry
 from .config import load_yaml
 from .context_engine import ContextEngine
+from .schema_validator import CoreSchemaValidator
 
 Finding = dict[str, str]
 
@@ -69,6 +70,7 @@ class AgentRegistry:
         self.root = root.resolve()
         self.business_pack_id = business_pack_id
         self.business_packs = BusinessPackRegistry(self.root)
+        self.schema_validator = CoreSchemaValidator(self.root)
 
     def list_agents(self) -> list[dict[str, Any]]:
         return [record.to_dict(self.root) for record in self._records()]
@@ -138,7 +140,15 @@ class AgentRegistry:
         if not config_path.exists():
             findings.append(self._finding("error", f"{agent_dir.name}: falta agent.yaml"))
             return None
-        agent = load_yaml(config_path).get("agent")
+        raw_payload = load_yaml(config_path)
+        findings.extend(
+            self.schema_validator.validate_payload(
+                payload=raw_payload,
+                schema_name="agent.schema.json",
+                source_path=config_path,
+            )
+        )
+        agent = raw_payload.get("agent")
         if not isinstance(agent, dict):
             findings.append(self._finding("error", self._format(config_path, "falta seccion agent")))
             return None
@@ -230,13 +240,22 @@ class AgentRegistry:
                     self._finding("error", self._format(record.path, f"skill no encontrada {skill}"))
                 )
         for workflow in record.workflows:
-            if not (record.path / "workflows" / f"{workflow}.yaml").exists():
+            workflow_path = record.path / "workflows" / f"{workflow}.yaml"
+            if not workflow_path.exists():
                 findings.append(
                     self._finding(
                         "error",
                         self._format(record.path, f"workflow no encontrado {workflow}"),
                     )
                 )
+                continue
+            findings.extend(
+                self.schema_validator.validate_payload(
+                    payload=load_yaml(workflow_path),
+                    schema_name="workflow.schema.json",
+                    source_path=workflow_path,
+                )
+            )
         if record.skills and record.evaluation_rubrics_path is None:
             findings.append(
                 self._finding("error", self._format(record.path, "falta evaluations/rubrics.yaml"))

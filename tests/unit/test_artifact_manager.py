@@ -55,3 +55,26 @@ def test_artifact_manager_blocks_missing_required_field(tmp_path: Path) -> None:
         assert "campos requeridos vacios" in str(exc)
     else:
         raise AssertionError("campo requerido vacio debio fallar")
+
+
+def test_artifact_manager_validates_record_against_core_schema(tmp_path: Path) -> None:
+    manager = ArtifactManager(tmp_path)
+    invalid_artifact = {
+        "artifact_id": "art-test",
+        "execution_id": "exec-test",
+        "agent_id": "growth-marketing-agent",
+        "workflow_id": "create-training-campaign",
+        "artifact_type": "campaign",
+        "source_action": "persist_artifacts",
+        "status": "published",
+        "metadata": {},
+        "version": "0.1.0",
+        "created_at": "2026-08-20T00:00:00+00:00",
+    }
+
+    try:
+        manager._validate_artifact_record(invalid_artifact)
+    except ValueError as exc:
+        assert "artifact.schema.json" in str(exc)
+    else:
+        raise AssertionError("artifact fuera de schema debio fallar")
